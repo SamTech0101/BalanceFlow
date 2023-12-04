@@ -8,18 +8,18 @@ String matchResult = '';
 
 // Define regex patterns for different SMS types
 
-final atmWithdrawalRegex = RegExp(r'Dear (\S+) Customer, (\S+) withdrawn at (\S+) ATM (\S+) from (\S+) on (\d{2}[A-Za-z]{3}\d{2}) Transaction Number (\d+). Available Balance (\S+)', caseSensitive: false);
-//"Dear UPI user A/C X3327 debited by 210.0 on date 01 Dec23 trf to RAGHAV SINGH SO Refno 333552183075. If not u? call
-// 1800111109. -SBI"
+final atmWithdrawalRegex = RegExp(r'Dear (\S+) Customer, (.*?) withdrawn at (.*?) ATM (.*?) from (.*?) on (.*?) Transaction Number (.*?). Available Balance (\S+)', caseSensitive: false);
+
 final RegExp debitedRegex = RegExp(
   r'Dear (\S+) user (.*?) debited by (\S+) on date (.*?) trf to (.*?) Refno (\d+)',
 );
 final RegExp creditSmsRegex = RegExp(
-  r'Dear (\S+) UPI User, ur A/c(\S+) credited by Rs(\d+) on (\d{2}[A-Za-z]{3}\d{2}) by \(Ref no (\d+)\)',
+  r'Dear (\S+) (\S+) User, ur (.*?) credited by (\S+) on (\S+) by \(Ref (\S+)\)',
 );
 
-
-
+//Dear SBI UPI User, ur A/ cX0273 credited by Rs20 on 13Nov23 by (Ref no564654654646)
+//Dear UPI user A/C X3327 debited by 210.0 on date 01 Dec23 trf to RAGHAV SINGH SO Refno 333552183075. If not u? call
+// 1800111109. -SBI
 onBackgroundMessage(SmsMessage message) {
   if (message.body != null) {
     if (atmWithdrawalRegex.hasMatch(message.body!)) {
@@ -27,10 +27,10 @@ onBackgroundMessage(SmsMessage message) {
       matchResult = "ATM Withdrawal: Bank: ${matches?.group(1)}, Amount: ${matches?.group(2)}, ATM ID: ${matches?.group(4)}, Account: ${matches?.group(5)}, Date: ${matches?.group(6)}, Transaction #: ${matches?.group(7)}, Balance: ${matches?.group(8)}";
     } else if (creditSmsRegex.hasMatch(message.body!)) {
       final matches = creditSmsRegex.firstMatch(message.body!);
-      matchResult = "Credit Transaction: Bank: ${matches?.group(1)}, Account: ${matches?.group(2)}, Amount Credited: ${matches?.group(3)}, Date: ${matches?.group(4)}, Ref No: ${matches?.group(5)}";
+      matchResult = "Credit Transaction: Bank: ${matches?.group(1)} ${matches!.group(2)}, Account: ${matches?.group(3)}, Amount Credited: ${matches?.group(4)}, Date: ${matches?.group(5)}, Ref : ${matches?.group(6)}";
     } else if (debitedRegex.hasMatch(message.body!)) {
       final matches = debitedRegex.firstMatch(message.body!);
-      matchResult = "UPI Debit: Account: ${matches?.group(1)}, Amount Debited: ${matches?.group(2)}, Date: ${matches?.group(3)}, Recipient: ${matches?.group(4)}, Ref No: ${matches?.group(5)}";
+      matchResult = "${matches?.group(1)} Debit: Account: ${matches?.group(2)}, Amount Debited: ${matches?.group(3)}, Date: ${matches?.group(4)}, Recipient: ${matches?.group(5)}, Ref No: ${matches?.group(6)}";
     } else {
       matchResult = "Received SMS does not match expected formats.";
     }
@@ -104,23 +104,16 @@ class _MyAppState extends State<MyApp> {
 
 
     debugPrint("Sms Body is  ${message.body}");
-    debugPrint("Sms Body status  ${debitedRegex.hasMatch(message.body!)}");
+    debugPrint("Sms Body status  ${atmWithdrawalRegex.hasMatch(message.body!)}");
     if (message.body != null) {
       if (atmWithdrawalRegex.hasMatch(message.body!)) {
         final matches = atmWithdrawalRegex.firstMatch(message.body!);
         matchResult = "ATM Withdrawal: Bank: ${matches?.group(1)}, Amount: ${matches?.group(2)}, ATM ID: ${matches?.group(4)}, Account: ${matches?.group(5)}, Date: ${matches?.group(6)}, Transaction #: ${matches?.group(7)}, Balance: ${matches?.group(8)}";
       } else if (creditSmsRegex.hasMatch(message.body!)) {
         final matches = creditSmsRegex.firstMatch(message.body!);
-        matchResult = "Credit Transaction: Bank: ${matches?.group(1)}, Account: ${matches?.group(2)}, Amount Credited: ${matches?.group(3)}, Date: ${matches?.group(4)}, Ref No: ${matches?.group(5)}";
+        matchResult = "Credit Transaction: Bank: ${matches?.group(1)} ${matches!.group(2)}, Account: ${matches?.group(3)}, Amount Credited: ${matches?.group(4)}, Date: ${matches?.group(5)}, Ref : ${matches?.group(6)}";
       } else if (debitedRegex.hasMatch(message.body!)) {
         final matches = debitedRegex.firstMatch(message.body!);
-        debugPrint("Sms Body match string 0   ${matches!.group(0)}");
-        debugPrint("Sms Body match string 1   ${matches!.group(1)}");
-        debugPrint("Sms Body match string 2   ${matches!.group(2)}");
-        debugPrint("Sms Body match string 3   ${matches!.group(3)}");
-        debugPrint("Sms Body match string 4   ${matches!.group(4)}");
-        debugPrint("Sms Body match string 5   ${matches!.group(5)}");
-        debugPrint("Sms Body match string 6   ${matches!.group(6)}");
         matchResult = "${matches?.group(1)} Debit: Account: ${matches?.group(2)}, Amount Debited: ${matches?.group(3)}, Date: ${matches?.group(4)}, Recipient: ${matches?.group(5)}, Ref No: ${matches?.group(6)}";
       } else {
         matchResult = "Received SMS does not match expected formats.";
