@@ -1,125 +1,194 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:async';
+import 'package:telephony/telephony.dart';
+
+String _message = "No SMS";
+String matchResult = '';
+
+// Define regex patterns for different SMS types
+
+final atmWithdrawalRegex = RegExp(r'Dear (\S+) Customer, (\S+) withdrawn at (\S+) ATM (\S+) from (\S+) on (\d{2}[A-Za-z]{3}\d{2}) Transaction Number (\d+). Available Balance (\S+)', caseSensitive: false);
+
+final RegExp creditSmsRegex = RegExp(
+  r'Dear (\S+) UPI User, ur A/c(\S+) credited by Rs(\d+) on (\d{2}[A-Za-z]{3}\d{2}) by \(Ref no (\d+)\)',
+);
+
+final RegExp upiSmsRegex = RegExp(
+  r'Dear UPI user A/C (\S+) debited by (\d+\.\d+) on date (\d{2}[A-Za-z]{3}\d{2}) trf to ([\w\s]+) Refno (\d+)',
+);
+
+onBackgroundMessage(SmsMessage message) {
+  if (message.body != null) {
+    if (atmWithdrawalRegex.hasMatch(message.body!)) {
+      final matches = atmWithdrawalRegex.firstMatch(message.body!);
+      debugPrint("Sms Body match string 0   ${matches!.group(0)}");
+      debugPrint("Sms Body match string 1   ${matches!.group(1)}");
+      debugPrint("Sms Body match string 2   ${matches!.group(2)}");
+      debugPrint("Sms Body match string 3   ${matches!.group(3)}");
+      debugPrint("Sms Body match string 4   ${matches!.group(4)}");
+      debugPrint("Sms Body match string 5   ${matches!.group(5)}");
+      debugPrint("Sms Body match string 6   ${matches!.group(6)}");
+      debugPrint("Sms Body match string 7   ${matches!.group(7)}");
+      debugPrint("Sms Body match string 8   ${matches!.group(8)}");
+
+
+      matchResult = "ATM Withdrawal: Bank: ${matches?.group(1)}, Amount: ${matches?.group(2)}, ATM ID: ${matches?.group(4)}, Account: ${matches?.group(5)}, Date: ${matches?.group(6)}, Transaction #: ${matches?.group(7)}, Balance: ${matches?.group(8)}";
+
+    } else if (creditSmsRegex.hasMatch(message.body!)) {
+
+      final matches = creditSmsRegex.firstMatch(message.body!);
+      matchResult = "Credit Transaction: Bank: ${matches?.group(1)}, Account: ${matches?.group(2)}, Amount Credited: ${matches?.group(3)}, Date: ${matches?.group(4)}, Ref No: ${matches?.group(5)}";
+    } else if (upiSmsRegex.hasMatch(message.body!)) {
+      final matches = upiSmsRegex.firstMatch(message.body!);
+      matchResult = "UPI Debit: Account: ${matches?.group(1)}, Amount Debited: ${matches?.group(2)}, Date: ${matches?.group(3)}, Recipient: ${matches?.group(4)}, Ref No: ${matches?.group(5)}";
+    } else {
+      matchResult = "Received SMS does not match expected formats.";
+    }
+
+
+      _message = matchResult;
+    debugPrint("onBackgroundMessage called: ${_message}");
+
+  } else {
+      _message = "Error reading message body.";
+  }
+}
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final telephony = Telephony.instance;
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
   }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
+  /*onSendStatus(SendStatus status) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _message = status == SendStatus.SENT ? "Sent" : "Delivered";
     });
   }
+*/
+  Future<void> initPlatformState() async {
+    // Check and request SMS permissions at runtime using permission_handler
+    var status = await Permission.sms.status;
+    debugPrint("Initial SMS permission status: ${status}");
+
+    if (status.isDenied) {
+      // We didn't ask for permission yet or the permission has been denied before but not permanently.
+      status = await Permission.sms.request();
+      debugPrint("SMS permission status after request: ${status}");
+
+    }
+
+    if (status.isGranted) {
+      // Permission is granted, listen for incoming SMS
+      telephony.listenIncomingSms(
+          onNewMessage: onMessage,
+          onBackgroundMessage: onBackgroundMessage,
+          listenInBackground: true
+      );
+
+        debugPrint('onBackgroundMessage --- foreground is ${matchResult} .');
+
+    } else {
+      debugPrint('SMS permission denied by user.');
+    }
+  }
+
+  onMessage(SmsMessage message) async {
+
+    // final regex = RegExp(r'Dear(\s([A-Za-z]+\s)+)Customer, [A-Za-z]+\.[0-9]+ [A-Za-z]+ at [A-Za-z]+ [A-Za-z]+ [A-Za-z0-9]+ from [A-Za-z0-9]+\/[A-Za-z0-9]+ on [A-Za-z0-9]+ Transaction Number [0-9]+\. Available Balance [A-Za-z]+([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[Ee]([+-]?\d+))?\.', caseSensitive: false);
+
+    // final regex = RegExp(r'Dear (\S+) Customer, (\S+) withdrawn at (\S+) ATM (\S+) from (\S+) on (\d{2}[A-Za-z]{3}\d{2}) Transaction Number (\d+). Available Balance (\S+)', caseSensitive: false);
+    // final regex = RegExp(
+    //     r'Dear (\S+) Customer, Rs\.(\d+) withdrawn at \S+ ATM (\S+) from A\/c(\S+) on (\d{2}[A-Za-z]{3}\d{2}) Transaction Number (\d+)\. Available Balance Rs\.(\d+\.\d+).*',
+    //     caseSensitive: false
+    // );
+
+
+    debugPrint("Sms Body is  ${message.body}");
+    debugPrint("Sms Body status  ${atmWithdrawalRegex.hasMatch(message.body!)}");
+    if (message.body != null) {
+      if (atmWithdrawalRegex.hasMatch(message.body!)) {
+        final matches = atmWithdrawalRegex.firstMatch(message.body!);
+        debugPrint("Sms Body match string 0   ${matches!.group(0)}");
+        debugPrint("Sms Body match string 1   ${matches!.group(1)}");
+        debugPrint("Sms Body match string 2   ${matches!.group(2)}");
+        debugPrint("Sms Body match string 3   ${matches!.group(3)}");
+        debugPrint("Sms Body match string 4   ${matches!.group(4)}");
+        debugPrint("Sms Body match string 5   ${matches!.group(5)}");
+        debugPrint("Sms Body match string 6   ${matches!.group(6)}");
+        debugPrint("Sms Body match string 7   ${matches!.group(7)}");
+        debugPrint("Sms Body match string 8   ${matches!.group(8)}");
+
+
+        matchResult = "ATM Withdrawal: Bank: ${matches?.group(1)}, Amount: ${matches?.group(2)}, ATM ID: ${matches?.group(4)}, Account: ${matches?.group(5)}, Date: ${matches?.group(6)}, Transaction #: ${matches?.group(7)}, Balance: ${matches?.group(8)}";
+
+      } else if (creditSmsRegex.hasMatch(message.body!)) {
+
+        final matches = creditSmsRegex.firstMatch(message.body!);
+        matchResult = "Credit Transaction: Bank: ${matches?.group(1)}, Account: ${matches?.group(2)}, Amount Credited: ${matches?.group(3)}, Date: ${matches?.group(4)}, Ref No: ${matches?.group(5)}";
+      } else if (upiSmsRegex.hasMatch(message.body!)) {
+        final matches = upiSmsRegex.firstMatch(message.body!);
+        matchResult = "UPI Debit: Account: ${matches?.group(1)}, Amount Debited: ${matches?.group(2)}, Date: ${matches?.group(3)}, Recipient: ${matches?.group(4)}, Ref No: ${matches?.group(5)}";
+      } else {
+        matchResult = "Received SMS does not match expected formats.";
+      }
+
+      setState(() {
+        // _message = message.body ?? "Error reading message body.";
+        debugPrint("Sms message is  ${_message}");
+
+        _message = matchResult;
+
+      });
+    } else {
+      setState(() {
+        _message = "Error reading message body.";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
+
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Plugin example app'),
+        ),
+        body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+          children: [
+            Center(child: Text("Latest received SMS: $_message")),
+            TextButton(
+                onPressed: () async {
+                  // await telephony.openDialer("1234567890");
+                  setState(() {
+                    _message = matchResult;
+
+                  });
+                },
+                child: Text('Open Dialer')
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
