@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'package:telephony/telephony.dart';
-
+import 'package:smartxp/File Operations.dart';
 String _message = "No SMS";
 String matchResult = '';
 
@@ -65,8 +65,14 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initPlatformState();
+    loadMessages();
   }
-
+  void loadMessages() async {
+    List<String> loadedMessages = await SmsStorage().readSMS();
+    setState(() {
+      messages = loadedMessages;
+    });
+  }
 
   /*onSendStatus(SendStatus status) {
     setState(() {
@@ -121,7 +127,7 @@ class _MyAppState extends State<MyApp> {
       } else {
         matchResult = "Received SMS does not match expected formats.";
       }
-
+      await SmsStorage().writeSMS(matchResult);
       setState(() {
         // _message = message.body ?? "Error reading message body.";
         debugPrint("Sms message is  ${_message}");

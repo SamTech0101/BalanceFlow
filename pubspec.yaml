@@ -37,7 +37,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   permission_handler: ^8.1.4
   telephony: ^0.2.0
-
+  path_provider: ^2.0.1
+  flutter_secure_storage: ^4.2.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
