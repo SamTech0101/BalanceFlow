@@ -16,6 +16,8 @@ final RegExp debitedRegex = RegExp(
 final RegExp creditSmsRegex = RegExp(
   r'Dear (\S+) (\S+) User, ur (.*?) credited by (\S+) on (\S+) by \(Ref (\S+)\)',
 );
+// Define a list to store all messages
+List<String> messages = [];
 
 //Dear SBI UPI User, ur A/ cX0273 credited by Rs20 on 13Nov23 by (Ref no564654654646)
 //Dear UPI user A/C X3327 debited by 210.0 on date 01 Dec23 trf to RAGHAV SINGH SO Refno 333552183075. If not u? call
@@ -36,7 +38,8 @@ onBackgroundMessage(SmsMessage message) {
     }
 
 
-      _message = matchResult;
+    messages.add(matchResult);
+
     debugPrint("onBackgroundMessage called: ${_message}");
 
   } else {
@@ -123,7 +126,8 @@ class _MyAppState extends State<MyApp> {
         // _message = message.body ?? "Error reading message body.";
         debugPrint("Sms message is  ${_message}");
 
-        _message = matchResult;
+        messages.add(matchResult);
+
 
       });
     } else {
@@ -141,23 +145,14 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(child: Text("Latest received SMS: $_message")),
-            TextButton(
-                onPressed: () async {
-                  // await telephony.openDialer("1234567890");
-                  setState(() {
-                    _message = matchResult;
-
-                  });
-                },
-                child: Text('Open Dialer')
-            ),
-
-          ],
-        ),
+          body: ListView.builder(
+            itemCount: messages.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(messages[index]),
+              );
+            },
+          ),
       ),
     );
   }
