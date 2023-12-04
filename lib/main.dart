@@ -74,12 +74,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  /*onSendStatus(SendStatus status) {
-    setState(() {
-      _message = status == SendStatus.SENT ? "Sent" : "Delivered";
-    });
-  }
-*/
+
   Future<void> initPlatformState() async {
     // Check and request SMS permissions at runtime using permission_handler
     var status = await Permission.sms.status;
@@ -117,17 +112,20 @@ class _MyAppState extends State<MyApp> {
     if (message.body != null) {
       if (atmWithdrawalRegex.hasMatch(message.body!)) {
         final matches = atmWithdrawalRegex.firstMatch(message.body!);
-        matchResult = "ATM Withdrawal: Bank: ${matches?.group(1)}, Amount: ${matches?.group(2)}, ATM ID: ${matches?.group(4)}, Account: ${matches?.group(5)}, Date: ${matches?.group(6)}, Transaction #: ${matches?.group(7)}, Balance: ${matches?.group(8)}";
+        matchResult = "ATM Withdrawal: Bank: ${matches?.group(1)}, Amount: ${matches?.group(2)}, ATM ID: ${matches?.group(4)}, Date: ${matches?.group(6)}, Transaction #: ${matches?.group(7)}, Balance: ${matches?.group(8)}";
       } else if (creditSmsRegex.hasMatch(message.body!)) {
         final matches = creditSmsRegex.firstMatch(message.body!);
-        matchResult = "Credit Transaction: Bank: ${matches?.group(1)} ${matches!.group(2)}, Account: ${matches?.group(3)}, Amount Credited: ${matches?.group(4)}, Date: ${matches?.group(5)}, Ref : ${matches?.group(6)}";
+        matchResult = "Credit Transaction: Bank: ${matches?.group(1)} ${matches!.group(2)}, Amount Credited: ${matches?.group(4)}, Date: ${matches?.group(5)}, Ref : ${matches?.group(6)}";
       } else if (debitedRegex.hasMatch(message.body!)) {
         final matches = debitedRegex.firstMatch(message.body!);
-        matchResult = "${matches?.group(1)} Debit: Account: ${matches?.group(2)}, Amount Debited: ${matches?.group(3)}, Date: ${matches?.group(4)}, Recipient: ${matches?.group(5)}, Ref No: ${matches?.group(6)}";
+        matchResult = "${matches?.group(1)} Debit:  Amount Debited: ${matches?.group(3)}, Date: ${matches?.group(4)}, Recipient: ${matches?.group(5)}, Ref No: ${matches?.group(6)}";
       } else {
         matchResult = "Received SMS does not match expected formats.";
       }
-      await SmsStorage().writeSMS(matchResult);
+      if (matchResult.isNotEmpty){
+        await SmsStorage().writeSMS(matchResult);
+
+      }
       setState(() {
         // _message = message.body ?? "Error reading message body.";
         debugPrint("Sms message is  ${_message}");
@@ -147,18 +145,56 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Bank Transaction SMS '),
         ),
-          body: ListView.builder(
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(messages[index]),
-              );
-            },
-          ),
+          body: Padding(padding: EdgeInsets.all(8),child: BankTransactionList(),),
+      ),
+    );
+  }
+}
+class BankTransactionList extends StatefulWidget {
+  @override
+  _BankTransactionListState createState() => _BankTransactionListState();
+}
+
+class _BankTransactionListState extends State<BankTransactionList> {
+  // Assuming this list will be populated with your SMS messages
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+
+      body: ListView.builder(
+        itemCount: messages.length,
+        itemBuilder: (context, index) {
+          var message = messages[index];
+          Color signColor = Colors.grey; // Default color
+          IconData icon = Icons.info; // Default icon
+          // Check message type and assign color and icon accordingly
+          if (message.contains("Debited")|| message.contains("Withdrawn")) {
+            signColor = Colors.red;
+            icon = Icons.arrow_downward; // Icon for withdrawal
+            debugPrint("message status color is red");
+
+          } else if (message.contains("Credited")) {
+            signColor = Colors.green;
+            icon = Icons.arrow_upward; // Icon for deposit
+            debugPrint("message status color is green");
+          }else{
+            message = "";
+          }
+
+          return message.isNotEmpty ? Card(
+            child: ListTile(
+              leading: Icon(icon, color: signColor),
+              title: Text(message),
+              tileColor: signColor.withOpacity(0.1),
+            ),
+          ) : SizedBox();
+        },
       ),
     );
   }
