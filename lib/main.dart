@@ -102,6 +102,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+
   onMessage(SmsMessage message) async {
 
 
@@ -148,7 +149,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Bank Transaction SMS '),
+          title: const Text('SmartXP'),
         ),
           body: Padding(padding: EdgeInsets.all(8),child: BankTransactionList(),),
       ),
