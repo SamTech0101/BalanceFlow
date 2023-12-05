@@ -22,7 +22,7 @@ List<String> messages = [];
 //Dear SBI UPI User, ur A/ cX0273 credited by Rs20 on 13Nov23 by (Ref no564654654646)
 //Dear UPI user A/C X3327 debited by 210.0 on date 01 Dec23 trf to RAGHAV SINGH SO Refno 333552183075. If not u? call
 // 1800111109. -SBI
-onBackgroundMessage(SmsMessage message) {
+onBackgroundMessage(SmsMessage message) async {
   if (message.body != null) {
     if (atmWithdrawalRegex.hasMatch(message.body!)) {
       final matches = atmWithdrawalRegex.firstMatch(message.body!);
@@ -40,32 +40,35 @@ onBackgroundMessage(SmsMessage message) {
 
     messages.add(matchResult);
 
-    debugPrint("onBackgroundMessage called: ${_message}");
+    debugPrint("onBackgroundMessage called: ${message.body}");
+    await SmsStorage().writeSMS(matchResult);
 
   } else {
       _message = "Error reading message body.";
   }
 }
 
-void main() {
+void main() async
+{
+
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
+
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp>  {
   final telephony = Telephony.instance;
-
 
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
-    loadMessages();
+
   }
   void loadMessages() async {
     List<String> loadedMessages = await SmsStorage().readSMS();
@@ -106,8 +109,6 @@ class _MyAppState extends State<MyApp> {
   onMessage(SmsMessage message) async {
 
 
-
-
     debugPrint("Sms Body is  ${message.body}");
     debugPrint("Sms Body status  ${atmWithdrawalRegex.hasMatch(message.body!)}");
     if (message.body != null) {
@@ -144,7 +145,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-
+    loadMessages();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -178,12 +179,10 @@ class _BankTransactionListState extends State<BankTransactionList> {
           if (message.contains("Debited")|| message.contains("Withdrawn")) {
             signColor = Colors.red;
             icon = Icons.arrow_downward; // Icon for withdrawal
-            debugPrint("message status color is red");
 
           } else if (message.contains("Credited")) {
             signColor = Colors.green;
             icon = Icons.arrow_upward; // Icon for deposit
-            debugPrint("message status color is green");
           }else{
             message = "";
           }

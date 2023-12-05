@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   permission_handler: ^8.1.4
   telephony: ^0.2.0
+  flutter_secure_storage: ^4.2.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.1
