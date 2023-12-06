@@ -1,4 +1,5 @@
-name: smartxp
+
+name: BalanceFlow
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -44,6 +45,7 @@ dependencies:
   flutter_bloc: ^8.1.3
   bloc: ^8.1.2
   get_it: ^7.6.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -82,11 +84,14 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+
+  fonts:
+      - family: OpenSans
+        fonts:
+          - asset: fonts/OpenSans-Regular.ttf
+          - asset: fonts/OpenSans-Medium.ttf
+          - asset: fonts/OpenSans-Bold.ttf
+
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:
