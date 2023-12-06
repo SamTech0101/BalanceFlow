@@ -1,4 +1,11 @@
+import 'package:BalanceFlow/bloc/theme/theme_bloc.dart';
+import 'package:BalanceFlow/bloc/theme/theme_event.dart';
+import 'package:BalanceFlow/bloc/theme/theme_state.dart';
+import 'package:BalanceFlow/utils/theme_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'package:telephony/telephony.dart';
@@ -39,13 +46,22 @@ List<String> messages = [];
 //   }
 // }
 
-void main() async
-{
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox(hiveThemeKey);
+  // final themeBox = Hive.box(hiveThemeKey);
+  // bool isDarkTheme = await themeBox.get(hiveThemeStateKey,defaultValue: false);
+  // final initialTheme = isDarkTheme ? darkTheme : lightTheme;
+  // final themeBloc = ThemeBloc()..add(InitializeTheme(lightTheme));
+
+
 
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
+
   @override
   _MyAppState createState() => _MyAppState();
 
@@ -137,13 +153,21 @@ class _MyAppState extends State<MyApp>  {
   @override
   Widget build(BuildContext context) {
     // loadMessages();
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('SmartXP'),
+    return BlocProvider(
+      create: (context) => ThemeBloc() ,
+      child: BlocBuilder<ThemeBloc,ThemeState>(
+        builder: (context,themeState) =>
+            MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: themeState.themeData,
+          home: Scaffold(
+            appBar: AppBar(
+              title: const Text('SmartXP'),
+            ),
+
+              body: Padding(padding: EdgeInsets.all(8),child: BankTransactionList(),),
+          ),
         ),
-          body: Padding(padding: EdgeInsets.all(8),child: BankTransactionList(),),
       ),
     );
   }
@@ -155,11 +179,25 @@ class BankTransactionList extends StatefulWidget {
 
 class _BankTransactionListState extends State<BankTransactionList> {
   // Assuming this list will be populated with your SMS messages
+@override
+  void initState()  {
+    super.initState();
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+appBar: AppBar(actions: [
+  BlocBuilder<ThemeBloc,ThemeState>(
+      builder: (context, themeSate){
+    return Switch(
+      value: themeSate.themeData == darkTheme,
+      onChanged: (isDark){
+        context.read<ThemeBloc>().add(InitializeTheme(isDark ? darkTheme : lightTheme));
+      },);
+  })
+],),
       body: ListView.builder(
         itemCount: messages.length,
         itemBuilder: (context, index) {

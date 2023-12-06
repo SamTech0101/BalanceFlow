@@ -12,3 +12,6 @@ final RegExp creditSmsRegex = RegExp(
 
 //string
  const String openSansFont = "OpenSans";
+ const String hiveThemeStateKey = "isDarkTheme";
+ const String hiveThemeKey = "Theme";
+ const String hiveTransactionKey = "isDarkTheme";
