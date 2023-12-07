@@ -1,6 +1,7 @@
 import 'package:BalanceFlow/bloc/theme/theme_bloc.dart';
 import 'package:BalanceFlow/bloc/theme/theme_event.dart';
 import 'package:BalanceFlow/bloc/theme/theme_state.dart';
+import 'package:BalanceFlow/ui/screens/transactions_screen.dart';
 import 'package:BalanceFlow/utils/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -199,31 +200,34 @@ appBar: AppBar(actions: [
       },);
   })
 ],),
-      body: ListView.builder(
-        itemCount: messages.length,
-        itemBuilder: (context, index) {
-          var message = messages[index];
-          Color signColor = Colors.grey; // Default color
-          IconData icon = Icons.info; // Default icon
-          // Check message type and assign color and icon accordingly
-          if (message.contains("Debited")|| message.contains("Withdrawn")) {
-            signColor = Colors.red;
-            icon = Icons.arrow_downward; // Icon for withdrawal
+      body: const TransactionsScreen()
+      // ListView.builder(
+      //   itemCount: messages.length,
+      //   itemBuilder: (context, index) {
+      //     var message = messages[index];
+      //     Color signColor = Colors.grey; // Default color
+      //     IconData icon = Icons.info; // Default icon
+      //     // Check message type and assign color and icon accordingly
+      //     if (message.contains("Debited")|| message.contains("Withdrawn")) {
+      //       signColor = Colors.red;
+      //       icon = Icons.arrow_downward; // Icon for withdrawal
+      //
+      //     } else if (message.contains("Credited")) {
+      //       signColor = Colors.green;
+      //       icon = Icons.arrow_upward; // Icon for deposit
+      //     }else{
+      //       message = "";
+      //     }
+      //
+      //     return message.isNotEmpty ? Card(
+      //       child: ListTile(
+      //         leading: Icon(icon, color: signColor),
+      //         title: Text(message),
+      //         tileColor: signColor.withOpacity(0.1),
+      //       ),
+      //     ) : SizedBox();
+      //   },
+      // ),
 
-          } else if (message.contains("Credited")) {
-            signColor = Colors.green;
-            icon = Icons.arrow_upward; // Icon for deposit
-          }else{
-            message = "";
-          }
-
-          return message.isNotEmpty ? Card(
-            child: ListTile(
-              leading: Icon(icon, color: signColor),
-              title: Text(message),
-              tileColor: signColor.withOpacity(0.1),
-            ),
-          ) : SizedBox();
-        },
-      ),);}
+    );}
   }

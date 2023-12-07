@@ -1,4 +1,3 @@
-// lib/model/transaction_message.dart
 
 enum TransactionType {
   credit,
@@ -7,7 +6,8 @@ enum TransactionType {
 }
 
 class TransactionMessage {
-  final int id;
+
+  final String id = DateTime.now().toIso8601String();
   final double amount;
   final String transactionId;
   final TransactionType type;
@@ -15,7 +15,6 @@ class TransactionMessage {
   final DateTime date;
 
   TransactionMessage({
-    required this.id,
     required this.amount,
     required this.transactionId,
     required this.type,
