@@ -3,20 +3,20 @@ import 'dart:io';
 import 'constants.dart';
 
 class AppError{
-final String message;
-  AppError(this.message);
+  final String message;
+ AppError._(this.message);
 
   factory AppError.storageError(){
-    return AppError(storageError);
+    return AppError._(storageError);
   }
-  factory AppError.transactionError(){
-    return AppError(generalError);
+  factory AppError.customError(String errorMessage){
+    return AppError._(errorMessage);
   }
   factory AppError.exception(Exception originalException) {
     if (originalException is IOException) {
-      return AppError(networkError);
+      return AppError._(networkError);
   } else {
-      return AppError(unexpectedError);
+      return AppError._(unexpectedError);
   }
 }
 }

@@ -5,6 +5,8 @@ import 'package:BalanceFlow/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'error_screen.dart';
+
 class TransactionsScreen extends StatelessWidget {
   const TransactionsScreen({super.key});
 
@@ -21,8 +23,8 @@ class TransactionsScreen extends StatelessWidget {
                 child: const CircularProgressIndicator());
           }else if( state is BankTransactionLoaded){
             return ListTile(title: Text(state.transactionMessage.account.toString()),);
-          }else {
-            return ErrorWidget(Exception());
+          }else if (state is BankTransactionError){
+            return ErrorScreen(errorMessage: state.error.message);
           }
           return Container();
         },
