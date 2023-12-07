@@ -8,18 +8,19 @@ enum TransactionType {
 class TransactionMessage {
 
   final String id = DateTime.now().toIso8601String();
+  final String bankName;
   final double amount;
   final String transactionId;
   final TransactionType type;
-  final String account;
   final DateTime date;
-
-  TransactionMessage({
+   String? description = '';
+  TransactionMessage( {
+    required this.bankName,
     required this.amount,
     required this.transactionId,
     required this.type,
-    required this.account,
     required this.date,
+     this.description
   });
 
 

@@ -4,9 +4,9 @@ import 'package:BalanceFlow/utils/AppError.dart';
 abstract class BankTransactionState{}
 class BankTransactionLoading extends BankTransactionState{}
 class BankTransactionLoaded extends BankTransactionState{
-  final TransactionMessage transactionMessage;
+  final List<TransactionMessage> transactions;
 
-  BankTransactionLoaded({required this.transactionMessage});
+  BankTransactionLoaded({required this.transactions});
 }
 class BankTransactionError extends BankTransactionState{
   final AppError error;

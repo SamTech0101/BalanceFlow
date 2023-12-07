@@ -24,6 +24,7 @@ const String storageError = "Failed to access storage. Please try again.";
 const String networkError = "Network error occurred. Please try again";
 const String unexpectedError = "An unexpected error occurred. Please try again later.";
 const String generalError = "something went wrong";
+const String parseSMSError = "'Could not parse SMS'";
 
 
 

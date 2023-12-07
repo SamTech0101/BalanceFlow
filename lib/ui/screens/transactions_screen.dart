@@ -22,7 +22,7 @@ class TransactionsScreen extends StatelessWidget {
                 onTap: (){context.read<BankTransactionBloc>().add(LoadBankTransactions());},
                 child: const CircularProgressIndicator());
           }else if( state is BankTransactionLoaded){
-            return ListTile(title: Text(state.transactionMessage.account.toString()),);
+            return ListTile(title: Text(state.transactions.first.transactionId.toString()),);
           }else if (state is BankTransactionError){
             return ErrorScreen(errorMessage: state.error.message);
           }
