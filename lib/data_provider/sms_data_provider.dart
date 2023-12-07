@@ -3,7 +3,11 @@ import 'package:BalanceFlow/utils/AppError.dart';
 import '../model/transaction_message.dart';
 import '../utils/constants.dart';
 import '../utils/general.dart';
+abstract class ISmsDataProvider{
+  Future<List<TransactionMessage>> fetchTransactions();
+  Future<TransactionMessage> addTransaction();
 
+}
 class SmsDataProvider{
 
   TransactionMessage _parseAtmWithdrawalSms(String sms) {

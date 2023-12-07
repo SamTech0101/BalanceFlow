@@ -1,19 +1,25 @@
 
-enum TransactionType {
-  credit,
-  debit,
-  atmWithdrawal,
-}
+import 'package:hive/hive.dart';
 
+import '../utils/constants.dart';
+part 'transaction_message.g.dart';
+ @HiveType(typeId: hiveTypeId0)
 class TransactionMessage {
 
-  final String id = DateTime.now().toIso8601String();
+  @HiveField(0)
+  final String id ;
+  @HiveField(1)
   final String bankName;
+  @HiveField(2)
   final double amount;
+  @HiveField(3)
   final String transactionId;
+  @HiveField(4)
   final TransactionType type;
+  @HiveField(5)
   final DateTime date;
-   String? description = '';
+  @HiveField(6)
+   String? description ;
   TransactionMessage( {
     required this.bankName,
     required this.amount,
@@ -21,7 +27,10 @@ class TransactionMessage {
     required this.type,
     required this.date,
      this.description
-  });
-
-
+  }) : id = DateTime.now().toIso8601String();
+}
+enum TransactionType {
+  credit,
+  debit,
+  atmWithdrawal,
 }

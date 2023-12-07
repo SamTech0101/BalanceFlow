@@ -27,5 +27,8 @@ const String generalError = "something went wrong";
 const String parseSMSError = "'Could not parse SMS'";
 
 
+//int
+const int hiveTypeId0 = 0;
+
 
 

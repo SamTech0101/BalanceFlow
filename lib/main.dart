@@ -1,6 +1,7 @@
 import 'package:BalanceFlow/bloc/theme/theme_bloc.dart';
 import 'package:BalanceFlow/bloc/theme/theme_event.dart';
 import 'package:BalanceFlow/bloc/theme/theme_state.dart';
+import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/ui/screens/transactions_screen.dart';
 import 'package:BalanceFlow/utils/theme_utils.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,9 @@ List<String> messages = [];
 void main() async {
   setupLocator();
   await Hive.initFlutter();
+  Hive.registerAdapter(TransactionMessageAdapter());
   await Hive.openBox(hiveThemeKey);
+  await Hive.openBox(hiveTransactionKey);
   // final themeBox = Hive.box(hiveThemeKey);
   // bool isDarkTheme = await themeBox.get(hiveThemeStateKey,defaultValue: false);
   // final initialTheme = isDarkTheme ? darkTheme : lightTheme;

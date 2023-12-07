@@ -10,7 +10,7 @@ class BankTransactionBloc extends Bloc<BankTransactionEvent, BankTransactionStat
   BankTransactionBloc() : super(BankTransactionLoading()){
     on<LoadBankTransactions>((event, emit) {
       try{
-        emit(BankTransactionLoaded(transactions: [TransactionMessage(bankName : "Mellat", amount: 29.3, transactionId: "324", type: TransactionType.atmWithdrawal, account: "AS/123", date: DateTime(2023),),TransactionMessage(amount: 222349.3, transactionId: "23423424234", type: TransactionType.credit, account: "AS/234234", date: DateTime(2023))]));
+        emit(BankTransactionLoaded(transactions: [TransactionMessage(bankName : "Panama", amount: 29.3, transactionId: "324", type: TransactionType.atmWithdrawal,  date: DateTime(2023),),TransactionMessage(amount: 222349.3, transactionId: "23423424234", type: TransactionType.credit,  date: DateTime(2023), bankName: 'HTC')]));
       }catch(_){
         emit(BankTransactionError(error: AppError.customError(generalError)));
       }
