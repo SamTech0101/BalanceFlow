@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-class SmsStorage {
-  static final SmsStorage _singleton = SmsStorage._internal();
+class SMSStorage {
+  static final SMSStorage _singleton = SMSStorage._internal();
 
-  factory SmsStorage() {
+  factory SMSStorage() {
     return _singleton;
   }
 
-  SmsStorage._internal();
+  SMSStorage._internal();
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
