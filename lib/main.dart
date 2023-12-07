@@ -9,6 +9,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'package:telephony/telephony.dart';
+import 'core/service_locator.dart';
 import 'utils/constants.dart';
 String _message = "No SMS";
 String matchResult = '';
@@ -47,7 +48,7 @@ List<String> messages = [];
 // }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  setupLocator();
   await Hive.initFlutter();
   await Hive.openBox(hiveThemeKey);
   // final themeBox = Hive.box(hiveThemeKey);
