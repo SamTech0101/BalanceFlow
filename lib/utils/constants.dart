@@ -15,9 +15,17 @@ final RegExp creditSmsRegex = RegExp(
  const String hiveThemeStateKey = "isDarkTheme";
  const String hiveThemeKey = "Theme";
  const String hiveTransactionKey = "isDarkTheme";
+ const String debitTitle = "debit";
+ const String creditTitle = "credit";
+ const String atmTitle = "ATM";
 
  //transactions Screen
  const String transactions = "Transactions";
+
+ //Success
+const String addTransactionSuccessTitle = "Your transaction added";
+const String deleteTransactionSuccessTitle = "Your transaction deleted";
+
 
  //Errors
 const String storageError = "Failed to access storage. Please try again.";

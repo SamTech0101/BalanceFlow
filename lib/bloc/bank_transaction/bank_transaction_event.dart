@@ -18,3 +18,8 @@ class AddBankTransaction extends TransactionEvent{
   AddBankTransaction({required  this.transactionMessage});
 
 }
+class AddBankSMS extends TransactionEvent {
+  final String sms;
+
+  AddBankSMS({required this.sms});
+}
