@@ -8,9 +8,9 @@ class TransactionsRepository implements TransactionMessageService{
 
   TransactionsRepository(this._localTransactions);
   @override
-  Future<void> addTransaction(TransactionMessage message)async {
+  Future<void> addTransaction(TransactionMessage message) async {
     try{
-
+     await  _localTransactions.addTransaction(message);
     }catch(_){
       throw AppError.exception(Exception());
 
@@ -20,7 +20,7 @@ class TransactionsRepository implements TransactionMessageService{
   @override
   Future<void> deleteTransactionMessage(String messageId) async{
     try{
-
+      await _localTransactions.deleteTransactionMessage(messageId);
     }catch(_){
       throw AppError.exception(Exception());
 
@@ -39,7 +39,7 @@ class TransactionsRepository implements TransactionMessageService{
   @override
   Future<void> updateTransaction(String messageId, TransactionMessage updatedTransaction)async {
     try{
-
+      await _localTransactions.updateTransaction(messageId, updatedTransaction);
     }catch(_){
       throw AppError.exception(Exception());
 
