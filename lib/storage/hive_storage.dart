@@ -6,12 +6,7 @@ import '../utils/AppError.dart';
 import '../utils/constants.dart';
 
 class LocalTransactions implements TransactionMessageService{
-  Future<Box<TransactionMessage>> _getBox()async{
-    if (!Hive.isBoxOpen(hiveTransactionKey)){
-      return await Hive.openBox(hiveTransactionKey);
-    }
-    return Hive.box(hiveTransactionKey);
-  }
+
   @override
   Future<void> addTransaction(TransactionMessage message) async{
     try{
@@ -55,5 +50,10 @@ class LocalTransactions implements TransactionMessageService{
       throw AppError.storageError();
     }
   }
-
+  Future<Box<TransactionMessage>> _getBox()async{
+    if (!Hive.isBoxOpen(hiveTransactionKey)){
+      return await Hive.openBox(hiveTransactionKey);
+    }
+    return Hive.box(hiveTransactionKey);
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/services/transactions_serviece.dart';
 import 'package:BalanceFlow/storage/hive_storage.dart';
+import 'package:BalanceFlow/utils/AppError.dart';
 
 class TransactionsRepository implements TransactionMessageService{
   final LocalTransactions _localTransactions;
@@ -11,26 +12,38 @@ class TransactionsRepository implements TransactionMessageService{
     try{
 
     }catch(_){
+      throw AppError.exception(Exception());
 
     }
   }
 
   @override
-  Future<void> deleteTransactionMessage(String messageId) {
-    // TODO: implement deleteTransactionMessage
-    throw UnimplementedError();
+  Future<void> deleteTransactionMessage(String messageId) async{
+    try{
+
+    }catch(_){
+      throw AppError.exception(Exception());
+
+    }
   }
 
   @override
-  Future<List<TransactionMessage>> fetchTransactions() {
-    // TODO: implement fetchTransactions
-    throw UnimplementedError();
+  Future<List<TransactionMessage>> fetchTransactions() async{
+    try{
+            return await _localTransactions.fetchTransactions();
+    }catch(_){
+    throw AppError.exception(Exception());
+    }
   }
 
   @override
-  Future<void> updateTransaction(String messageId, TransactionMessage updatedTransaction) {
-    // TODO: implement updateTransaction
-    throw UnimplementedError();
+  Future<void> updateTransaction(String messageId, TransactionMessage updatedTransaction)async {
+    try{
+
+    }catch(_){
+      throw AppError.exception(Exception());
+
+    }
   }
 
 }
