@@ -54,8 +54,7 @@ BalanceFlow
 - **/bloc:** Contains the logic for state management using the BLoC pattern.
 - **/model:** Holds data model definitions.
 - **/repository:** Manages data interactions and abstracts the data layer.
-- **/data_provider:** Direct interaction with data sources.
-- **/services:** Business logic and platform services like telephony.
+- **/services:** Business logic and platform services .
 - **/storage:** Local persistence using Hive.
 - **/ui:** User interface components, split into screens and reusable widgets.
 - **/utils:** Shared utility functions and classes.
