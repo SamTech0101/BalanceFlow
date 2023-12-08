@@ -1,15 +1,22 @@
 import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/utils/AppError.dart';
 
-abstract class BankTransactionState{}
-class BankTransactionLoading extends BankTransactionState{}
-class BankTransactionLoaded extends BankTransactionState{
+abstract class TransactionState{}
+class TransactionInitial extends TransactionState{}
+class TransactionLoading extends TransactionState{}
+class FetchTransactions extends TransactionState{
   final List<TransactionMessage> transactions;
 
-  BankTransactionLoaded({required this.transactions});
+  FetchTransactions({required this.transactions});
 }
-class BankTransactionError extends BankTransactionState{
+class TransactionOperationSuccess extends TransactionState {
+  final String message;
+
+  TransactionOperationSuccess({required this.message});
+}
+
+class TransactionError extends TransactionState{
   final AppError error;
 
-  BankTransactionError({required this.error});
+  TransactionError({required this.error});
 }

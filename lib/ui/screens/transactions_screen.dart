@@ -14,16 +14,16 @@ class TransactionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text(transactions),),
-      body: BlocProvider<BankTransactionBloc>(create: (context) => BankTransactionBloc(),
-      child: BlocBuilder<BankTransactionBloc,BankTransactionState>(
+      body: BlocProvider<TransactionBloc>(create: (context) => TransactionBloc(),
+      child: BlocBuilder<TransactionBloc,TransactionState>(
         builder: (context,state){
-          if (state is BankTransactionLoading){
+          if (state is TransactionLoading){
             return  GestureDetector(
-                onTap: (){context.read<BankTransactionBloc>().add(LoadBankTransactions());},
+                onTap: (){context.read<TransactionBloc>().add(LoadBankTransactions());},
                 child: const CircularProgressIndicator());
-          }else if( state is BankTransactionLoaded){
+          }else if( state is FetchTransactions){
             return ListTile(title: Text(state.transactions.first.transactionId.toString()),);
-          }else if (state is BankTransactionError){
+          }else if (state is TransactionError){
             return ErrorScreen(errorMessage: state.error.message);
           }
           return Container();

@@ -1,3 +1,59 @@
-class SmsStorage{
+import 'package:BalanceFlow/services/transactions_serviece.dart';
+import 'package:hive/hive.dart';
+
+import '../model/transaction_message.dart';
+import '../utils/AppError.dart';
+import '../utils/constants.dart';
+
+class LocalTransactions implements TransactionMessageService{
+  Future<Box<TransactionMessage>> _getBox()async{
+    if (!Hive.isBoxOpen(hiveTransactionKey)){
+      return await Hive.openBox(hiveTransactionKey);
+    }
+    return Hive.box(hiveTransactionKey);
+  }
+  @override
+  Future<void> addTransaction(TransactionMessage message) async{
+    try{
+      final box = await _getBox();
+     await box.put(message.id, message);
+    }catch(_){
+      throw AppError.storageError();
+    }
+
+  }
+
+  @override
+  Future<void> deleteTransactionMessage(String messageId)async {
+    try{
+      final box = await _getBox();
+      if(box.keys.isNotEmpty && box.keys.contains(messageId)) {
+        await box.delete(messageId);
+      }
+    }catch(_){
+      throw AppError.storageError();
+    }
+  }
+
+  @override
+  Future<List<TransactionMessage>> fetchTransactions() async{
+    try{
+      final box = await _getBox();
+     return  box.values.toList();
+    }catch(_){
+      throw AppError.storageError();
+    }
+  }
+
+  @override
+  Future<void> updateTransaction(String messageId, TransactionMessage updatedTransaction
+      )async {
+    try{
+      final box = await _getBox();
+      await box.put(messageId, updatedTransaction);
+    }catch(_){
+      throw AppError.storageError();
+    }
+  }
 
 }
