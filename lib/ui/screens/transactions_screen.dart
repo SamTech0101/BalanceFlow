@@ -1,6 +1,7 @@
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_event.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_state.dart';
+import 'package:BalanceFlow/core/service_locator.dart';
 import 'package:BalanceFlow/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +15,8 @@ class TransactionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text(transactions),),
-      body: BlocProvider<TransactionBloc>(create: (context) => TransactionBloc(),
+      body: BlocProvider<TransactionBloc>(
+        create: (context) => locator<TransactionBloc>(),
       child: BlocBuilder<TransactionBloc,TransactionState>(
         builder: (context,state){
           if (state is TransactionLoading){

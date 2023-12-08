@@ -1,14 +1,17 @@
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_event.dart';
+import 'package:BalanceFlow/core/service_locator.dart';
 import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/utils/AppError.dart';
 import 'package:BalanceFlow/utils/constants.dart';
 import 'package:bloc/bloc.dart';
 
+import '../../repository/transaction_repository.dart';
 import '../../utils/general.dart';
 import 'bank_transaction_state.dart';
 
 class TransactionBloc extends Bloc<TransactionEvent, TransactionState>{
-  TransactionBloc() : super(TransactionLoading()){
+  final TransactionsRepository _repository;
+  TransactionBloc() : _repository = locator<TransactionsRepository>(), super(TransactionLoading()){
     on<LoadBankTransactions>((event, emit) {
       try{
         emit(FetchTransactions(transactions: [

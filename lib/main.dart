@@ -159,7 +159,7 @@ class _MyAppState extends State<MyApp>  {
   Widget build(BuildContext context) {
     // loadMessages();
     return BlocProvider(
-      create: (context) => ThemeBloc() ,
+      create: (context) => locator<ThemeBloc>() ,
       child: BlocBuilder<ThemeBloc,ThemeState>(
         builder: (context,themeState) =>
             MaterialApp(
@@ -200,6 +200,7 @@ appBar: AppBar(actions: [
       value: themeSate.themeData == darkTheme,
       onChanged: (isDark){
         context.read<ThemeBloc>().add(InitializeTheme(isDark ? darkTheme : lightTheme));
+
       },);
   })
 ],),

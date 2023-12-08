@@ -1,11 +1,18 @@
 import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/services/transactions_serviece.dart';
+import 'package:BalanceFlow/storage/hive_storage.dart';
 
-class TransactionMessageRepository implements TransactionMessageService{
+class TransactionsRepository implements TransactionMessageService{
+  final LocalTransactions _localTransactions;
+
+  TransactionsRepository(this._localTransactions);
   @override
-  Future<void> addTransaction(TransactionMessage message) {
-    // TODO: implement addTransaction
-    throw UnimplementedError();
+  Future<void> addTransaction(TransactionMessage message)async {
+    try{
+
+    }catch(_){
+
+    }
   }
 
   @override
