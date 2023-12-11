@@ -1,21 +1,12 @@
 // Define regex patterns for different SMS types
-
-
-
-// final RegExp debitedRegex = RegExp(
-//   r'Dear (\S+) user (.*?) debited by (\S+) on date (.*?) trf to (.*?) Refno (\d+)',
-// );
-// const String _patternWithRS = r'debited by Rs\.\d+(\.\d{2})?';
-const String _pattern = r'by (Rs\.\s*)?\d+(\.\d{1,2})?';
+const String _pattern = r'by (\S+)';
 const String _patternWithoutBy = r'Rs\.\d+(\.\d{2})?';
 
 final RegExp debitedAndCreditRegex = RegExp(_pattern);
 final RegExp debitedRegexWithoutBy = RegExp(_patternWithoutBy);
 final  atmWithdrawalRegex = RegExp(_patternWithoutBy);
 
-final RegExp creditSmsRegex = RegExp(
-  r'Dear (\S+) (\S+) User, ur (.*?) credited by (\S+) on (\S+) by \(Ref (\S+)\)',
-);
+
 
 
 //string

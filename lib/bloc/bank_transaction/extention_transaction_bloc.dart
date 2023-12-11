@@ -1,7 +1,8 @@
 
-import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
-import 'package:flutter/foundation.dart';
 
+
+
+import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
 import '../../model/transaction_message.dart';
 import '../../utils/constants.dart';
 extension TransactionBlocExtention on TransactionBloc{
@@ -10,9 +11,7 @@ extension TransactionBlocExtention on TransactionBloc{
 
     final match = atmWithdrawalRegex.firstMatch(sms);
     if (match != null) {
-      debugPrint("=============>> parseAtmWithdrawalSms is match ${match}");
-      final convertedAmount = match.group(0)!.split("Rs.")[1];
-      final amount = double.parse(convertedAmount);
+      final amount = double.parse(splitNumberFromString("${match.group(0)}")[0]);
 
       return TransactionMessage(
           bankName: "",
@@ -27,12 +26,9 @@ extension TransactionBlocExtention on TransactionBloc{
   }
 
   TransactionMessage? parseCreditSms(String sms) {
-    final match = creditSmsRegex.firstMatch(sms);
+    final match = debitedAndCreditRegex.firstMatch(sms);
     if (match != null) {
-
-      double amount =  double.parse(splitNumberFromString("${match.group(4)}")[0]);
-
-
+      double amount =  double.parse(splitNumberFromString("${match.group(0)}")[0]);
       return TransactionMessage(
         bankName: "",
         amount: amount ,
@@ -49,38 +45,25 @@ extension TransactionBlocExtention on TransactionBloc{
 
   TransactionMessage? parseDebitSms(String sms) {
 
+      double amount = 0;
     final matchWithBy = debitedAndCreditRegex.firstMatch(sms);
     final matchWithoutBy = debitedRegexWithoutBy.firstMatch(sms);
-    debugPrint("=======>>> parseDebitSms ");
 
-    if (matchWithBy != null) {
-      var  convertedAmount = "";
-      if (matchWithBy.group(0)!.contains("Rs")){
-        convertedAmount = matchWithBy.group(0)!.split("by Rs.")[1];
-      }else {
-        convertedAmount = matchWithBy.group(0)!.split("by ")[1];
+    if (matchWithoutBy != null) {
+      if (double.parse(
+          splitNumberFromString("${matchWithoutBy.group(0)}")[0]) != 0) {
+
+        amount = double.parse(
+            splitNumberFromString("${matchWithoutBy.group(0)}")[0]);
       }
+    }else if (matchWithBy != null) {
+      if (double.parse(
+          splitNumberFromString("${matchWithBy.group(0)}")[0]) != 0) {
 
-      final amount = double.parse(convertedAmount);
-
-      return TransactionMessage(
-          bankName: "",
-          amount: amount,
-          transactionId: "",
-          type: TransactionType.debit,
-          date: DateTime.now(),
-          description: "SMS"
-      );
-    }else if (matchWithoutBy != null) {
-      var  convertedAmount = "";
-      if (matchWithoutBy.group(0)!.contains("Rs")){
-        convertedAmount = matchWithoutBy.group(0)!.split("Rs.")[1];
-      }else {
-        convertedAmount = matchWithoutBy.group(0)!;
+        amount = double.parse(
+            splitNumberFromString("${matchWithBy.group(0)}")[0]);
       }
-
-      final amount = double.parse(convertedAmount);
-
+    }
       return TransactionMessage(
           bankName: "",
           amount: amount,
@@ -90,8 +73,7 @@ extension TransactionBlocExtention on TransactionBloc{
           description: "SMS"
       );
     }
-    return null;
-  }
+
   List<String> splitNumberFromString(String input) {
     RegExp regExp = RegExp(r'(\d+|\D+)');
     var matches = regExp.allMatches(input).map((m) => m.group(0) ?? "").toList();
