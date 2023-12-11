@@ -15,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'core/service_locator.dart';
 import 'model/transaction_type_adapter.dart';
+import 'ui/widgets/total_balance.dart';
 import 'utils/constants.dart';
 
 
@@ -99,9 +100,10 @@ class _MyAppState extends State<MyApp>  {
                             builder: (BuildContext context) {
                               return Dialog(
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                                  child: Container(
-                                    child: Text("Info"),
-                                    padding: EdgeInsets.all(20), ))
+
+                                    child: TotalBalanceWidget(),
+
+                              )
 
                               ;
                             },

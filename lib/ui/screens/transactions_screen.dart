@@ -67,12 +67,22 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   icon = Icons.arrow_upward; // Icon for deposit
                 }
 
-                return  Card(
-                  child: ListTile(
-                    leading: Icon(icon, color: signColor),
-                    title: Text("${message.bankName} ${message.amount}  ${message.date.toIso8601String().split("T")[0]} "),
+                return  Dismissible(
+                  key: Key(index.toString()),
+                  onDismissed: (direction) {
+                    // Remove the item from the data source.
+                    state.transactions.removeAt(index);
+                    // Then show a snackbar.
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text('${message.bankName} ${message.amount} dismissed')));
+                  },
+                  child: Card(
+                    child: ListTile(
+                      leading: Icon(icon, color: signColor),
+                      title: Text("${message.bankName} ${message.amount}  ${message.date.toIso8601String().split("T")[0]} "),
 
-                    tileColor: signColor.withOpacity(0.1),
+                      tileColor: signColor.withOpacity(0.1),
+                    ),
                   ),
                 ) ;
               },
