@@ -42,13 +42,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(transactions),
-      actions: [
-        TextButton(onPressed: (){
-    },style: TextButton.styleFrom(
-          foregroundColor: Colors.black54,
-        ), child:  const Text("Get Bank SMS"),)
-      ],),
+
       body: BlocBuilder<TransactionBloc,TransactionState>(
         builder: (context,state){
           if (state is TransactionLoading){
