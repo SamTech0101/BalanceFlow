@@ -6,12 +6,12 @@
 //   r'Dear (\S+) user (.*?) debited by (\S+) on date (.*?) trf to (.*?) Refno (\d+)',
 // );
 // const String _patternWithRS = r'debited by Rs\.\d+(\.\d{2})?';
-const String pattern = r'by (Rs\.\s*)?\d+(\.\d{1,2})?';
-const String _patternWithoutRs = r'Rs\.\d+(\.\d{2})?';
+const String _pattern = r'by (Rs\.\s*)?\d+(\.\d{1,2})?';
+const String _patternWithoutBy = r'Rs\.\d+(\.\d{2})?';
 
-final RegExp debitedRegex = RegExp(pattern);
-final RegExp debitedRegexWithoutRs = RegExp(pattern);
-final  atmWithdrawalRegex = RegExp(pattern);
+final RegExp debitedAndCreditRegex = RegExp(_pattern);
+final RegExp debitedRegexWithoutBy = RegExp(_patternWithoutBy);
+final  atmWithdrawalRegex = RegExp(_patternWithoutBy);
 
 final RegExp creditSmsRegex = RegExp(
   r'Dear (\S+) (\S+) User, ur (.*?) credited by (\S+) on (\S+) by \(Ref (\S+)\)',

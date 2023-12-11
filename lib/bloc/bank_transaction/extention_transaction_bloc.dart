@@ -11,24 +11,16 @@ extension TransactionBlocExtention on TransactionBloc{
     final match = atmWithdrawalRegex.firstMatch(sms);
     if (match != null) {
       debugPrint("=============>> parseAtmWithdrawalSms is match ${match}");
-
       final convertedAmount = match.group(0)!.split("Rs.")[1];
-      debugPrint("<<=============>> parseAtmWithdrawalSms ${convertedAmount}");
-
-      // final bankName = match.group(1)!;
-      // final transactionId = match.group(6)!;
       final amount = double.parse(convertedAmount);
-      // final date = _parseDate(match.group(4)!);
-      // final recipient = match.group(5)!;
-      // debugPrint("<<=============>>  parseDebitSms ${bankName}<<<${transactionId}<<<${amount}<<<${date}<<<${recipient}");
 
       return TransactionMessage(
-          bankName: "ATM",
+          bankName: "",
           amount: amount,
-          transactionId: "transactionId",
+          transactionId: "",
           type: TransactionType.atmWithdrawal,
           date: DateTime.now(),
-          description: "recipient"
+          description: "SMS"
       );
     }
     return null;
@@ -37,26 +29,17 @@ extension TransactionBlocExtention on TransactionBloc{
   TransactionMessage? parseCreditSms(String sms) {
     final match = creditSmsRegex.firstMatch(sms);
     if (match != null) {
-      // debugPrint("=============>> parseCreditSms is match ${match.groupCount}");
-      // debugPrint("=============>> parseCreditSms account ${match.group(3)}");
-      // debugPrint("=============>> parseCreditSms amount ${match.group(4)}");
-      // debugPrint("=============>> parseCreditSms date ${match.group(5)}");
-      // debugPrint("=============>> parseCreditSms transactionID ${match.group(6)}");
 
-      final bankName1 = match.group(1)!;
-      final bankName2 = match.group(2)!;
       double amount =  double.parse(splitNumberFromString("${match.group(4)}")[0]);
-      final date = _parseDate(match.group(5)!);
-      final transactionId = match.group(6)!;
 
-      // debugPrint("<<=============>> parseCreditSms  ${bankName1}<<<${bankName2}<<<${amount}<<<${date}<<<${transactionId}");
 
       return TransactionMessage(
-        bankName: "$bankName1 $bankName2",
+        bankName: "",
         amount: amount ,
-        transactionId: transactionId,
+        transactionId: "",
         type: TransactionType.credit,
-        date: date,
+        date: DateTime.now(),
+        description: "SMS"
       );
     }
 
@@ -65,30 +48,46 @@ extension TransactionBlocExtention on TransactionBloc{
 
 
   TransactionMessage? parseDebitSms(String sms) {
-    final match = debitedRegex.firstMatch(sms);
 
-    if (match != null) {
+    final matchWithBy = debitedAndCreditRegex.firstMatch(sms);
+    final matchWithoutBy = debitedRegexWithoutBy.firstMatch(sms);
+    debugPrint("=======>>> parseDebitSms ");
+
+    if (matchWithBy != null) {
       var  convertedAmount = "";
-      if (match.group(0)!.contains("Rs")){
-        convertedAmount = match.group(0)!.split("by Rs.")[1];
+      if (matchWithBy.group(0)!.contains("Rs")){
+        convertedAmount = matchWithBy.group(0)!.split("by Rs.")[1];
       }else {
-        convertedAmount = match.group(0)!.split("by ")[1];
+        convertedAmount = matchWithBy.group(0)!.split("by ")[1];
       }
 
-      // final bankName = match.group(1)!;
-      // final transactionId = match.group(6)!;
       final amount = double.parse(convertedAmount);
-      // final date = _parseDate(match.group(4)!);
-      // final recipient = match.group(5)!;
-      // debugPrint("<<=============>>  parseDebitSms ${bankName}<<<${transactionId}<<<${amount}<<<${date}<<<${recipient}");
 
       return TransactionMessage(
-          bankName: "bankName",
+          bankName: "",
           amount: amount,
-          transactionId: "transactionId",
+          transactionId: "",
           type: TransactionType.debit,
           date: DateTime.now(),
-          description: "recipient"
+          description: "SMS"
+      );
+    }else if (matchWithoutBy != null) {
+      var  convertedAmount = "";
+      if (matchWithoutBy.group(0)!.contains("Rs")){
+        convertedAmount = matchWithoutBy.group(0)!.split("Rs.")[1];
+      }else {
+        convertedAmount = matchWithoutBy.group(0)!;
+      }
+
+      final amount = double.parse(convertedAmount);
+
+      return TransactionMessage(
+          bankName: "",
+          amount: amount,
+          transactionId: "",
+          type: TransactionType.debit,
+          date: DateTime.now(),
+          description: "SMS"
       );
     }
     return null;
@@ -110,25 +109,5 @@ extension TransactionBlocExtention on TransactionBloc{
 
     return matches;
   }
-  DateTime _parseDate(String dateString) {
-    // Define a map to convert month abbreviations to month numbers
-    const monthNumbers = {
-      'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
-      'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12',
-    };
 
-    // Extract the day, month abbreviation, and year from the dateString
-    final day = dateString.substring(0, 2);
-    final monthAbbr = dateString.substring(2, 5);
-    final year = dateString.substring(5);
-
-    // Convert the month abbreviation to a number
-    final month = monthNumbers[monthAbbr];
-
-    // Construct the date in YYYY-MM-DD format
-    final formattedDate = '20$year-$month-$day';
-
-    // Parse the formatted date string into a DateTime object
-    return DateTime.parse(formattedDate);
-  }
 }
