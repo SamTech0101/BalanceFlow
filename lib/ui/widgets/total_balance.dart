@@ -4,12 +4,12 @@ class TotalBalanceWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
         color: Colors.blue,
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: Column(
+      child: const Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
@@ -18,12 +18,12 @@ class TotalBalanceWidget extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            'Rs 460',
+            '₹ 460',
             style: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           SizedBox(height: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Column(
                 children: <Widget>[

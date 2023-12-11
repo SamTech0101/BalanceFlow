@@ -79,6 +79,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   child: Card(
                     child: ListTile(
                       leading: Icon(icon, color: signColor),
+                      trailing: Text(message.amount.toString()),
+                      subtitle: Text("SMS"),
                       title: Text("${message.bankName} ${message.amount}  ${message.date.toIso8601String().split("T")[0]} "),
 
                       tileColor: signColor.withOpacity(0.1),

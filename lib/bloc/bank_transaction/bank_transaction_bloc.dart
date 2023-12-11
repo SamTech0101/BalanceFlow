@@ -46,13 +46,13 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     final SMS sms = event.sms ;
       TransactionMessage? transactionMessage;
       //debit
-      if (event.sms.body.contains(debitTitle)) {
+      if (event.sms.body.contains(debitTitle)||event.sms.body.contains(debitTitle.toLowerCase())) {
         transactionMessage = parseDebitSms(sms.body);
         //credit
       } else if (sms.body.contains(creditTitle)) {
         transactionMessage = parseCreditSms(sms.body);
         //ATM
-      } else if (sms.body.contains(atmTitle)) {
+      } else if (sms.body.contains(atmTitle) ||sms.body.contains(withdrawnTitle)) {
         transactionMessage = parseAtmWithdrawalSms(
             sms.body);
       }

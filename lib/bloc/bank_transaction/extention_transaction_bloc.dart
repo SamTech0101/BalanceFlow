@@ -1,6 +1,5 @@
 
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
-import 'package:BalanceFlow/repository/transaction_repository.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../model/transaction_message.dart';
@@ -13,18 +12,23 @@ extension TransactionBlocExtention on TransactionBloc{
     if (match != null) {
       debugPrint("=============>> parseAtmWithdrawalSms is match ${match}");
 
-      final bankName = match.group(1)!;
-      final transactionId = match.group(7)!;
-      final amount = double.parse(match.group(2)!);
-      final date = _parseDate(match.group(6)!);
-      debugPrint("<<=============>> parseAtmWithdrawalSms  ${bankName}<<<${transactionId}<<<${amount}<<<${date}");
+      final convertedAmount = match.group(0)!.split("Rs.")[1];
+      debugPrint("<<=============>> parseAtmWithdrawalSms ${convertedAmount}");
+
+      // final bankName = match.group(1)!;
+      // final transactionId = match.group(6)!;
+      final amount = double.parse(convertedAmount);
+      // final date = _parseDate(match.group(4)!);
+      // final recipient = match.group(5)!;
+      // debugPrint("<<=============>>  parseDebitSms ${bankName}<<<${transactionId}<<<${amount}<<<${date}<<<${recipient}");
 
       return TransactionMessage(
-        bankName: bankName,
-        amount: amount,
-        transactionId: transactionId,
-        type: TransactionType.atmWithdrawal,
-        date: date,
+          bankName: "ATM",
+          amount: amount,
+          transactionId: "transactionId",
+          type: TransactionType.atmWithdrawal,
+          date: DateTime.now(),
+          description: "recipient"
       );
     }
     return null;
@@ -64,21 +68,27 @@ extension TransactionBlocExtention on TransactionBloc{
     final match = debitedRegex.firstMatch(sms);
 
     if (match != null) {
-      debugPrint("<<=============>> parseDebitSms");
-      final bankName = match.group(1)!;
-      final transactionId = match.group(6)!;
-      final amount = double.parse(match.group(3)!);
-      final date = _parseDate(match.group(4)!);
-      final recipient = match.group(5)!;
-      debugPrint("<<=============>>  parseDebitSms ${bankName}<<<${transactionId}<<<${amount}<<<${date}<<<${recipient}");
+      var  convertedAmount = "";
+      if (match.group(0)!.contains("Rs")){
+        convertedAmount = match.group(0)!.split("by Rs.")[1];
+      }else {
+        convertedAmount = match.group(0)!.split("by ")[1];
+      }
+
+      // final bankName = match.group(1)!;
+      // final transactionId = match.group(6)!;
+      final amount = double.parse(convertedAmount);
+      // final date = _parseDate(match.group(4)!);
+      // final recipient = match.group(5)!;
+      // debugPrint("<<=============>>  parseDebitSms ${bankName}<<<${transactionId}<<<${amount}<<<${date}<<<${recipient}");
 
       return TransactionMessage(
-          bankName: bankName,
+          bankName: "bankName",
           amount: amount,
-          transactionId: transactionId,
-          type: TransactionType.atmWithdrawal,
-          date: date,
-          description: recipient
+          transactionId: "transactionId",
+          type: TransactionType.debit,
+          date: DateTime.now(),
+          description: "recipient"
       );
     }
     return null;

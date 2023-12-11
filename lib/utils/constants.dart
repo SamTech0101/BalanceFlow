@@ -1,10 +1,18 @@
 // Define regex patterns for different SMS types
 
-final  atmWithdrawalRegex = RegExp(r'Dear (\S+) Customer, (.*?) withdrawn at (.*?) ATM (.*?) from (.*?) on (.*?) Transaction Number (.*?). Available Balance (\S+)', caseSensitive: false);
 
-final RegExp debitedRegex = RegExp(
-  r'Dear (\S+) user (.*?) debited by (\S+) on date (.*?) trf to (.*?) Refno (\d+)',
-);
+
+// final RegExp debitedRegex = RegExp(
+//   r'Dear (\S+) user (.*?) debited by (\S+) on date (.*?) trf to (.*?) Refno (\d+)',
+// );
+// const String _patternWithRS = r'debited by Rs\.\d+(\.\d{2})?';
+const String pattern = r'by (Rs\.\s*)?\d+(\.\d{1,2})?';
+const String _patternWithoutRs = r'Rs\.\d+(\.\d{2})?';
+
+final RegExp debitedRegex = RegExp(pattern);
+final RegExp debitedRegexWithoutRs = RegExp(pattern);
+final  atmWithdrawalRegex = RegExp(pattern);
+
 final RegExp creditSmsRegex = RegExp(
   r'Dear (\S+) (\S+) User, ur (.*?) credited by (\S+) on (\S+) by \(Ref (\S+)\)',
 );
@@ -16,9 +24,10 @@ final RegExp creditSmsRegex = RegExp(
  const String hiveThemeKey = "Theme";
  const String hiveTransactionKey = "TransactionKey";
  const String hiveSMSKey = "SMSKey";
- const String debitTitle = "debit";
+ const String debitTitle = "Debit";
  const String creditTitle = "credit";
  const String atmTitle = "ATM";
+ const String withdrawnTitle = "withdrawn";
 
  //transactions Screen
  const String transactions = "Transactions";
