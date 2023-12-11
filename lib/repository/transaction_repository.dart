@@ -1,4 +1,5 @@
 
+import 'package:BalanceFlow/model/total_balance.dart';
 import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/services/transactions_serviece.dart';
 import 'package:BalanceFlow/storage/hive_storage.dart';
@@ -53,6 +54,12 @@ import 'package:flutter/foundation.dart';
       throw AppError.exception(Exception());
 
     }
+  }
+
+  @override
+  Future<TotalBalanceModel> calculateTotalBalance() {
+    // TODO: implement calculateTotalBalance
+    throw UnimplementedError();
   }
 
 

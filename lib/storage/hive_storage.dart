@@ -1,3 +1,4 @@
+import 'package:BalanceFlow/model/total_balance.dart';
 import 'package:BalanceFlow/services/transactions_serviece.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
@@ -63,6 +64,27 @@ class LocalTransactions implements TransactionMessageService{
     }
 
     return Hive.box<TransactionMessage>(hiveTransactionKey);
+
+  }
+
+  @override
+  Future<TotalBalanceModel> calculateTotalBalance() async{
+    try{
+      List<TransactionMessage> transactions = await fetchTransactions();
+      TotalBalanceModel totalBalanceModel = TotalBalanceModel(totalBalance: 0, income: 0, expense: 0);
+      for (var item in transactions) {
+        if(item.type == TransactionType.credit){
+          totalBalanceModel.income += item.amount;
+        }else {
+          totalBalanceModel.expense += item.amount;
+        }
+      }
+      totalBalanceModel.totalBalance = (totalBalanceModel.income - totalBalanceModel.expense);
+      return totalBalanceModel;
+    }catch(_){
+      throw AppError.storageError();
+
+    }
 
   }
 
