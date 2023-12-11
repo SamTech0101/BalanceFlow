@@ -22,12 +22,12 @@ const Color darkSecondaryColor = Colors.grey;
 
 //  light theme Text
 const TextTheme lightTextTheme = TextTheme(
-  bodySmall:TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.normal, color: Colors.black54, fontSize: 12) ,
+  bodySmall:TextStyle( fontFamily: openSansFont,fontWeight: FontWeight.normal, color: Colors.black54, fontSize: 12) ,
   labelLarge: TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.bold,color: Colors.white, fontSize: 14),
   bodyMedium:TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.normal, color: Colors.black, fontSize: 16) ,
   bodyLarge: TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.bold, color: Colors.black, fontSize: 18),
   displayLarge: TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.bold,color: Colors.black, fontSize: 24),
-
+  // titleLarge: TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.bold,color: Colors.black, fontSize: 28),
 );
 
 //  dark theme Text
@@ -37,6 +37,8 @@ const TextTheme darkTextTheme = TextTheme(
   bodyMedium:TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.normal, color: Colors.white, fontSize: 16) ,
   bodyLarge: TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
   displayLarge: TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.bold,color: Colors.white, fontSize: 24),
+  // titleLarge: TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.bold,color: Colors.white, fontSize: 28),
+
 );
 
 

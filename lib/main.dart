@@ -6,6 +6,7 @@ import 'package:BalanceFlow/bloc/theme/theme_event.dart';
 import 'package:BalanceFlow/bloc/theme/theme_state.dart';
 import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/ui/screens/home_screen.dart';
+import 'package:BalanceFlow/ui/widgets/add_transaction_dialog.dart';
 import 'package:BalanceFlow/utils/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -74,7 +75,6 @@ class _MyAppState extends State<MyApp>  {
 
   @override
   Widget build(BuildContext context) {
-    // loadMessages();
     return MultiBlocProvider(
       providers: [
        BlocProvider(create: (context)=> locator<ThemeBloc>() ),
@@ -90,6 +90,36 @@ class _MyAppState extends State<MyApp>  {
             appBar: AppBar(
               title: const Text('SmartXP'),
                 actions: [
+                  BlocBuilder<TransactionBloc,TransactionState>(builder: (context,transactionState){
+                    return  Row(
+                      children: [
+                        IconButton(onPressed: (){
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                  child: Container(
+                                    child: Text("Info"),
+                                    padding: EdgeInsets.all(20), ))
+
+                              ;
+                            },
+                          );
+                        }, icon: const Icon(Icons.info)),
+                        IconButton(onPressed: (){
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AddTransactionDialog(); // Opens the AddTransactionDialog
+                            },
+                          );
+                        }, icon: const Icon(Icons.add) ),
+                      ],
+
+                    );
+
+                  }),
                   BlocBuilder<ThemeBloc,ThemeState>(
                       builder: (context, themeSate){
                         return
@@ -101,7 +131,10 @@ class _MyAppState extends State<MyApp>  {
 
                       }),
 
+
+
                 ]
+
             ),
 
               body: const Padding(padding: EdgeInsets.all(8),child: HomeScreen(),),
