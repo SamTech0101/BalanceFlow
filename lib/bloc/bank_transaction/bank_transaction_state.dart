@@ -11,8 +11,9 @@ class FetchTransactions extends TransactionState{
 }
 class TransactionOperationSuccess extends TransactionState {
   final String message;
+  final List<TransactionMessage>? transactions ;
 
-  TransactionOperationSuccess({required this.message});
+  TransactionOperationSuccess({required this.message,this.transactions});
 }
 
 class TransactionError extends TransactionState{

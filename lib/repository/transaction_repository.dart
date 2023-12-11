@@ -1,17 +1,25 @@
+
 import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/services/transactions_serviece.dart';
 import 'package:BalanceFlow/storage/hive_storage.dart';
 import 'package:BalanceFlow/utils/AppError.dart';
+import 'package:flutter/foundation.dart';
 
-class TransactionsRepository implements TransactionMessageService{
+
+ class TransactionsRepository implements TransactionMessageService{
   final LocalTransactions _localTransactions;
 
   TransactionsRepository(this._localTransactions);
+
+
   @override
   Future<void> addTransaction(TransactionMessage message) async {
     try{
-     await  _localTransactions.addTransaction(message);
-    }catch(_){
+            await _localTransactions.addTransaction(message);
+
+    }catch(e){
+      debugPrint("========TransactionsRepository=====>>  $e");
+
       throw AppError.exception(Exception());
 
     }
@@ -30,6 +38,7 @@ class TransactionsRepository implements TransactionMessageService{
   @override
   Future<List<TransactionMessage>> fetchTransactions() async{
     try{
+      debugPrint("========fetchTransactions ");
             return await _localTransactions.fetchTransactions();
     }catch(_){
     throw AppError.exception(Exception());
@@ -45,5 +54,8 @@ class TransactionsRepository implements TransactionMessageService{
 
     }
   }
+
+
+
 
 }

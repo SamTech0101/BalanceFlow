@@ -14,7 +14,8 @@ final RegExp creditSmsRegex = RegExp(
  const String openSansFont = "OpenSans";
  const String hiveThemeStateKey = "isDarkTheme";
  const String hiveThemeKey = "Theme";
- const String hiveTransactionKey = "isDarkTheme";
+ const String hiveTransactionKey = "TransactionKey";
+ const String hiveSMSKey = "SMSKey";
  const String debitTitle = "debit";
  const String creditTitle = "credit";
  const String atmTitle = "ATM";
@@ -23,7 +24,7 @@ final RegExp creditSmsRegex = RegExp(
  const String transactions = "Transactions";
 
  //Success
-const String addTransactionSuccessTitle = "Your transaction added";
+const String addTransactionSuccessTitle = "Your transactions update";
 const String deleteTransactionSuccessTitle = "Your transaction deleted";
 
 
@@ -32,7 +33,7 @@ const String storageError = "Failed to access storage. Please try again.";
 const String networkError = "Network error occurred. Please try again";
 const String unexpectedError = "An unexpected error occurred. Please try again later.";
 const String generalError = "something went wrong";
-const String parseSMSError = "'Could not parse SMS'";
+const String parseSMSError = "Received SMS does not match expected formats.";
 
 
 //int

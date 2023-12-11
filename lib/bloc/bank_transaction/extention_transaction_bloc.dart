@@ -1,18 +1,23 @@
 
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
+import 'package:BalanceFlow/repository/transaction_repository.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../model/transaction_message.dart';
-import '../../utils/AppError.dart';
 import '../../utils/constants.dart';
 extension TransactionBlocExtention on TransactionBloc{
 
-  TransactionMessage _parseAtmWithdrawalSms(String sms) {
+  TransactionMessage? parseAtmWithdrawalSms(String sms) {
+
     final match = atmWithdrawalRegex.firstMatch(sms);
     if (match != null) {
+      debugPrint("=============>> parseAtmWithdrawalSms is match ${match}");
+
       final bankName = match.group(1)!;
       final transactionId = match.group(7)!;
       final amount = double.parse(match.group(2)!);
       final date = _parseDate(match.group(6)!);
+      debugPrint("<<=============>> parseAtmWithdrawalSms  ${bankName}<<<${transactionId}<<<${amount}<<<${date}");
 
       return TransactionMessage(
         bankName: bankName,
@@ -21,41 +26,51 @@ extension TransactionBlocExtention on TransactionBloc{
         type: TransactionType.atmWithdrawal,
         date: date,
       );
-    } else {
-      throw AppError.customError(parseSMSError);
     }
+    return null;
   }
 
-  TransactionMessage _parseCreditSms(String sms) {
+  TransactionMessage? parseCreditSms(String sms) {
     final match = creditSmsRegex.firstMatch(sms);
     if (match != null) {
+      // debugPrint("=============>> parseCreditSms is match ${match.groupCount}");
+      // debugPrint("=============>> parseCreditSms account ${match.group(3)}");
+      // debugPrint("=============>> parseCreditSms amount ${match.group(4)}");
+      // debugPrint("=============>> parseCreditSms date ${match.group(5)}");
+      // debugPrint("=============>> parseCreditSms transactionID ${match.group(6)}");
+
       final bankName1 = match.group(1)!;
       final bankName2 = match.group(2)!;
-      final amount = double.parse(match.group(2)!);
+      double amount =  double.parse(splitNumberFromString("${match.group(4)}")[0]);
       final date = _parseDate(match.group(5)!);
       final transactionId = match.group(6)!;
 
+      // debugPrint("<<=============>> parseCreditSms  ${bankName1}<<<${bankName2}<<<${amount}<<<${date}<<<${transactionId}");
 
       return TransactionMessage(
         bankName: "$bankName1 $bankName2",
-        amount: amount,
+        amount: amount ,
         transactionId: transactionId,
         type: TransactionType.credit,
         date: date,
       );
-    } else {
-      throw AppError.customError(parseSMSError);
     }
+
+    return null;
   }
 
-  TransactionMessage _parseDebitSms(String sms) {
+
+  TransactionMessage? parseDebitSms(String sms) {
     final match = debitedRegex.firstMatch(sms);
+
     if (match != null) {
+      debugPrint("<<=============>> parseDebitSms");
       final bankName = match.group(1)!;
       final transactionId = match.group(6)!;
       final amount = double.parse(match.group(3)!);
       final date = _parseDate(match.group(4)!);
       final recipient = match.group(5)!;
+      debugPrint("<<=============>>  parseDebitSms ${bankName}<<<${transactionId}<<<${amount}<<<${date}<<<${recipient}");
 
       return TransactionMessage(
           bankName: bankName,
@@ -65,11 +80,26 @@ extension TransactionBlocExtention on TransactionBloc{
           date: date,
           description: recipient
       );
-    } else {
-      throw AppError.customError(parseSMSError);
     }
+    return null;
   }
+  List<String> splitNumberFromString(String input) {
+    RegExp regExp = RegExp(r'(\d+|\D+)');
+    var matches = regExp.allMatches(input).map((m) => m.group(0) ?? "").toList();
+    // Check if the first element is not a number, and if so, swap the elements
+    if (matches.isNotEmpty && !RegExp(r'^\d+$').hasMatch(matches[0])) {
+      for (var i = 1; i < matches.length; i++) {
+        if (RegExp(r'^\d+$').hasMatch(matches[i])) {
+          var temp = matches[0];
+          matches[0] = matches[i];
+          matches[i] = temp;
+          break;
+        }
+      }
+    }
 
+    return matches;
+  }
   DateTime _parseDate(String dateString) {
     // Define a map to convert month abbreviations to month numbers
     const monthNumbers = {

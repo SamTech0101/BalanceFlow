@@ -1,4 +1,5 @@
 import 'package:BalanceFlow/model/transaction_message.dart';
+import 'package:readsms/model/sms.dart';
 
 abstract class TransactionEvent{}
 class LoadBankTransactions extends TransactionEvent{}
@@ -19,7 +20,8 @@ class AddBankTransaction extends TransactionEvent{
 
 }
 class AddBankSMS extends TransactionEvent {
-  final String sms;
+final SMS sms;
 
   AddBankSMS({required this.sms});
+
 }

@@ -27,6 +27,7 @@ const TextTheme lightTextTheme = TextTheme(
   bodyMedium:TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.normal, color: Colors.black, fontSize: 16) ,
   bodyLarge: TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.bold, color: Colors.black, fontSize: 18),
   displayLarge: TextStyle(fontFamily: openSansFont,fontWeight: FontWeight.bold,color: Colors.black, fontSize: 24),
+
 );
 
 //  dark theme Text

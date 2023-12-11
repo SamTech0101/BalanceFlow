@@ -1,3 +1,6 @@
+import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
+import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_event.dart';
+import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_state.dart';
 import 'package:BalanceFlow/bloc/theme/theme_bloc.dart';
 import 'package:BalanceFlow/bloc/theme/theme_event.dart';
 import 'package:BalanceFlow/bloc/theme/theme_state.dart';
@@ -6,12 +9,11 @@ import 'package:BalanceFlow/ui/screens/transactions_screen.dart';
 import 'package:BalanceFlow/utils/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
-import 'package:telephony/telephony.dart';
 import 'core/service_locator.dart';
+import 'model/transaction_type_adapter.dart';
 import 'utils/constants.dart';
 String _message = "No SMS";
 String matchResult = '';
@@ -37,12 +39,12 @@ List<String> messages = [];
 //     } else {
 //       matchResult = "Received SMS does not match expected formats.";
 //     }
-
-
+//
+//
 //     messages.add(matchResult);
 //
 //     debugPrint("onBackgroundMessage called: ${message.body}");
-//     await SmsStorage().writeSMS(matchResult);
+//     // await SmsStorage().writeSMS(matchResult);
 //
 //   } else {
 //       _message = "Error reading message body.";
@@ -52,16 +54,11 @@ List<String> messages = [];
 void main() async {
   setupLocator();
   await Hive.initFlutter();
+  Hive.registerAdapter(TransactionTypeAdapter());
   Hive.registerAdapter(TransactionMessageAdapter());
   await Hive.openBox(hiveThemeKey);
-  await Hive.openBox(hiveTransactionKey);
-  // final themeBox = Hive.box(hiveThemeKey);
-  // bool isDarkTheme = await themeBox.get(hiveThemeStateKey,defaultValue: false);
-  // final initialTheme = isDarkTheme ? darkTheme : lightTheme;
-  // final themeBloc = ThemeBloc()..add(InitializeTheme(lightTheme));
-
-
-
+  await Hive.openBox<TransactionMessage>(hiveTransactionKey);
+   await Hive.openBox<List<String>>(hiveSMSKey);
   runApp(MyApp());
 }
 
@@ -73,7 +70,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp>  {
-  final telephony = Telephony.instance;
+  // final telephony = Telephony.instance;
 
 
   @override
@@ -89,7 +86,7 @@ class _MyAppState extends State<MyApp>  {
   //   });
   // }
 
-
+  //
   Future<void> initPlatformState() async {
     // Check and request SMS permissions at runtime using permission_handler
     var status = await Permission.sms.status;
@@ -102,64 +99,56 @@ class _MyAppState extends State<MyApp>  {
 
     }
 
-    if (status.isGranted) {
-      // Permission is granted, listen for incoming SMS
-      // telephony.listenIncomingSms(
-      //     onNewMessage: onMessage,
-      //     onBackgroundMessage: onBackgroundMessage,
-      //     listenInBackground: true
-      // );
 
-        debugPrint('onBackgroundMessage --- foreground is ${matchResult} .');
-
-    } else {
-      debugPrint('SMS permission denied by user.');
-    }
   }
 
 
-  onMessage(SmsMessage message) async {
-
-
-    debugPrint("Sms Body is  ${message.body}");
-    debugPrint("Sms Body status  ${atmWithdrawalRegex.hasMatch(message.body!)}");
-    if (message.body != null) {
-      if (atmWithdrawalRegex.hasMatch(message.body!)) {
-        final matches = atmWithdrawalRegex.firstMatch(message.body!);
-        matchResult = "ATM Withdrawal: Bank: ${matches?.group(1)}, Amount: ${matches?.group(2)}, ATM ID: ${matches?.group(4)}, Date: ${matches?.group(6)}, Transaction #: ${matches?.group(7)}, Balance: ${matches?.group(8)}";
-      } else if (creditSmsRegex.hasMatch(message.body!)) {
-        final matches = creditSmsRegex.firstMatch(message.body!);
-        matchResult = "Credit Transaction: Bank: ${matches?.group(1)} ${matches!.group(2)}, Amount Credited: ${matches?.group(4)}, Date: ${matches?.group(5)}, Ref : ${matches?.group(6)}";
-      } else if (debitedRegex.hasMatch(message.body!)) {
-        final matches = debitedRegex.firstMatch(message.body!);
-        matchResult = "${matches?.group(1)} Debit:  Amount Debited: ${matches?.group(3)}, Date: ${matches?.group(4)}, Recipient: ${matches?.group(5)}, Ref No: ${matches?.group(6)}";
-      } else {
-        matchResult = "Received SMS does not match expected formats.";
-      }
-      if (matchResult.isNotEmpty){
-        // await SmsStorage().writeSMS(matchResult);
-
-      }
-      setState(() {
-        // _message = message.body ?? "Error reading message body.";
-        debugPrint("Sms message is  ${_message}");
-
-        messages.add(matchResult);
-
-
-      });
-    } else {
-      setState(() {
-        _message = "Error reading message body.";
-      });
-    }
-  }
+  // onMessage(SmsMessage message) async {
+  //
+  //
+  //   debugPrint("Sms Body is  ${message.body}");
+  //   debugPrint("Sms Body status  ${atmWithdrawalRegex.hasMatch(message.body!)}");
+  //   if (message.body != null) {
+  //     if (atmWithdrawalRegex.hasMatch(message.body!)) {
+  //       final matches = atmWithdrawalRegex.firstMatch(message.body!);
+  //       matchResult = "ATM Withdrawal: Bank: ${matches?.group(1)}, Amount: ${matches?.group(2)}, ATM ID: ${matches?.group(4)}, Date: ${matches?.group(6)}, Transaction #: ${matches?.group(7)}, Balance: ${matches?.group(8)}";
+  //     } else if (creditSmsRegex.hasMatch(message.body!)) {
+  //       final matches = creditSmsRegex.firstMatch(message.body!);
+  //       matchResult = "Credit Transaction: Bank: ${matches?.group(1)} ${matches!.group(2)}, Amount Credited: ${matches?.group(4)}, Date: ${matches?.group(5)}, Ref : ${matches?.group(6)}";
+  //     } else if (debitedRegex.hasMatch(message.body!)) {
+  //       final matches = debitedRegex.firstMatch(message.body!);
+  //       matchResult = "${matches?.group(1)} Debit:  Amount Debited: ${matches?.group(3)}, Date: ${matches?.group(4)}, Recipient: ${matches?.group(5)}, Ref No: ${matches?.group(6)}";
+  //     } else {
+  //       matchResult = "Received SMS does not match expected formats.";
+  //     }
+  //     if (matchResult.isNotEmpty){
+  //       // await SmsStorage().writeSMS(matchResult);
+  //
+  //     }
+  //     setState(() {
+  //       // _message = message.body ?? "Error reading message body.";
+  //       debugPrint("Sms message is  ${_message}");
+  //
+  //       messages.add(matchResult);
+  //
+  //
+  //     });
+  //   } else {
+  //     setState(() {
+  //       _message = "Error reading message body.";
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     // loadMessages();
-    return BlocProvider(
-      create: (context) => locator<ThemeBloc>() ,
+    return MultiBlocProvider(
+      providers: [
+       BlocProvider(create: (context)=> locator<ThemeBloc>() ),
+       BlocProvider(create: (context)=> locator<TransactionBloc>()..add(LoadBankTransactions()) ),
+      ],
+
       child: BlocBuilder<ThemeBloc,ThemeState>(
         builder: (context,themeState) =>
             MaterialApp(
@@ -178,17 +167,47 @@ class _MyAppState extends State<MyApp>  {
   }
 }
 class BankTransactionList extends StatefulWidget {
+  const BankTransactionList({super.key});
+
   @override
   _BankTransactionListState createState() => _BankTransactionListState();
 }
 
 class _BankTransactionListState extends State<BankTransactionList> {
-  // Assuming this list will be populated with your SMS messages
-@override
+
+  @override
   void initState()  {
     super.initState();
-
+// initPlatformState();
   }
+// Future<void> initPlatformState() async {
+//   // Check and request SMS permissions at runtime using permission_handler
+//   var status = await Permission.sms.status;
+//   debugPrint("Initial SMS permission status: ${status}");
+//
+//   if (status.isDenied) {
+//     // We didn't ask for permission yet or the permission has been denied before but not permanently.
+//     status = await Permission.sms.request();
+//     debugPrint("SMS permission status after request: ${status}");
+//
+//   }
+//
+//   if (status.isGranted) {
+//     // Permission is granted, listen for incoming SMS
+//     telephony.listenIncomingSms(
+//         onNewMessage: onMessage,
+//         onBackgroundMessage: onBackgroundMessage,
+//         listenInBackground: true
+//     );
+//
+//     debugPrint('onBackgroundMessage --- foreground is ${matchResult} .');
+//
+//   } else {
+//     debugPrint('SMS permission denied by user.');
+//   }
+// }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +223,7 @@ appBar: AppBar(actions: [
       },);
   })
 ],),
-      body: const TransactionsScreen()
+      body:  TransactionsScreen()
       // ListView.builder(
       //   itemCount: messages.length,
       //   itemBuilder: (context, index) {

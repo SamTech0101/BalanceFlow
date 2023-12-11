@@ -28,8 +28,10 @@ class TransactionMessage {
     required this.date,
      this.description
   }) : id = DateTime.now().toIso8601String();
+
+
 }
-enum TransactionType {
+enum  TransactionType  {
   credit,
   debit,
   atmWithdrawal,
