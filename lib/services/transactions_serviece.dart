@@ -7,4 +7,5 @@ abstract class TransactionMessageService {
   Future<void> addTransaction(TransactionMessage message);
   Future<void> deleteTransactionMessage(String messageId);
   Future<void> updateTransaction(String messageId, TransactionMessage updatedTransaction);
+  Future<void> calculateTotalBalance();
 }
