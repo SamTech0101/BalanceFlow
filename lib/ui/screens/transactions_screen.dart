@@ -2,7 +2,7 @@ import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_event.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_state.dart';
 import 'package:BalanceFlow/model/transaction_message.dart';
-import 'package:BalanceFlow/utils/constants.dart';
+import 'package:BalanceFlow/ui/widgets/total_balance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:readsms/readsms.dart';
@@ -19,6 +19,7 @@ class TransactionsScreen extends StatefulWidget {
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
   final plugin = Readsms();
+  FetchTransactions? lastFetchTransactionsState;
 
 
 
@@ -34,7 +35,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     print(sms.sender);
     print(sms.timeReceived);
     context.read<TransactionBloc>().add(AddBankSMS(sms: sms));
-
   });
   }
 
@@ -43,61 +43,86 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      body: BlocBuilder<TransactionBloc,TransactionState>(
-        builder: (context,state){
-          if (state is TransactionLoading){
-            return  GestureDetector(
-                onTap: (){context.read<TransactionBloc>().add(LoadBankTransactions());},
-                child: const CircularProgressIndicator());
-          }
-          else if( state is FetchTransactions){
-         return          ListView.builder(
-              itemCount: state.transactions.length,
-              itemBuilder: (context, index) {
-                var message = state.transactions[index];
-                Color signColor = Colors.grey; // Default color
-                IconData icon = Icons.info; // Default icon
-                // Check message type and assign color and icon accordingly
-                if (message.type == TransactionType.atmWithdrawal || message.type == TransactionType.debit) {
-                  signColor = Colors.red;
-                  icon = Icons.arrow_downward; // Icon for withdrawal
+      body: BlocConsumer<TransactionBloc,TransactionState>(
+          listener: (context,state){
+            if(state is FetchTotalBalance){
 
-                } else if (message.type == TransactionType.credit) {
-                  signColor = Colors.green;
-                  icon = Icons.arrow_upward; // Icon for deposit
-                }
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Center(child: TotalBalanceWidget(totalBalanceModel: state.totalBalanceModel)),
+                  );// Opens the AddTransactionDialog
+                },
+              );
+            }
+          },
+          builder: (context,state){
+            if (state is FetchTransactions) {
+              lastFetchTransactionsState = state;
+            }
+            if (state is TransactionLoading){
+              return const CircularProgressIndicator();
+            }
+            else if( state is FetchTransactions || state is FetchTotalBalance ){
 
-                return  Dismissible(
-                  key: Key(index.toString()),
-                  onDismissed: (direction) {
-                    // Remove the item from the data source.
-                    state.transactions.removeAt(index);
-                    // Then show a snackbar.
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text('${message.bankName} ${message.amount} dismissed')));
-                  },
-                  child: Card(
-                    child: ListTile(
-                      leading: Icon(icon, color: signColor),
-                      trailing: Text(message.amount.toString()),
-                      subtitle: Text("SMS"),
-                      title: Text("${message.bankName} ${message.amount}  ${message.date.toIso8601String().split("T")[0]} "),
+              return
+                _buildTransactionList(lastFetchTransactionsState);
+            }else if (state is TransactionOperationSuccess){
+              return Dialog(shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),child: Text(state.message),);
+            }
+            else if (state is TransactionError){
+              return ErrorScreen(errorMessage: state.error.message);
+            }else{
+              return const Text("");
+            }
 
-                      tileColor: signColor.withOpacity(0.1),
-                    ),
-                  ),
-                ) ;
-              },
-            );
-          }else if (state is TransactionOperationSuccess){
-            return Dialog(shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),child: Text(state.message),);
-          }
-          else if (state is TransactionError){
-            return ErrorScreen(errorMessage: state.error.message);
-          }
-          return Container();
-        },
-      )
+          },
+   )
+
     );
   }
+}
+Widget _buildTransactionList(FetchTransactions? state) {
+  if(state == null){
+    return const Center(child: Text('No transactions available'));
+  }
+  return ListView.builder(
+    itemCount: state.transactions.length,
+    itemBuilder: (context, index) {
+      var message = state.transactions[index];
+      return _buildTransactionListItem(message, index, state);
+    },
+  );
+}
+
+Widget _buildTransactionListItem(TransactionMessage message, int index, FetchTransactions state) {
+  Color signColor = Colors.grey; // Default color
+  IconData icon = Icons.info; // Default icon
+  // Check message type and assign color and icon accordingly
+  if (message.type == TransactionType.atmWithdrawal || message.type == TransactionType.debit) {
+    signColor = Colors.red;
+    icon = Icons.arrow_downward; // Icon for withdrawal
+
+  } else if (message.type == TransactionType.credit) {
+    signColor = Colors.green;
+    icon = Icons.arrow_upward; // Icon for deposit
+  }
+  return Dismissible(
+    key: Key(index.toString()),
+    onDismissed: (direction) {
+      // ... your logic for dismissing an item
+    },
+    child: Card(
+      child: ListTile(
+        leading: Icon(icon, color: signColor),
+        trailing: Text(message.amount.toString()),
+        subtitle: Text("SMS"),
+        title: Text("${message.bankName} ${message.amount}  ${message.date.toIso8601String().split("T")[0]} "),
+
+        tileColor: signColor.withOpacity(0.1),
+      ),
+    ),
+  );
 }

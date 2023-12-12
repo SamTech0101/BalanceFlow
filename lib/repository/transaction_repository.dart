@@ -57,9 +57,15 @@ import 'package:flutter/foundation.dart';
   }
 
   @override
-  Future<TotalBalanceModel> calculateTotalBalance() {
-    // TODO: implement calculateTotalBalance
-    throw UnimplementedError();
+  Future<TotalBalanceModel> calculateTotalBalance() async{
+    try{
+      debugPrint("calculateTotalBalance Repo");
+
+      return  await _localTransactions.calculateTotalBalance();
+    }catch(_){
+      throw AppError.exception(Exception());
+
+    }
   }
 
 

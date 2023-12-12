@@ -2,6 +2,7 @@
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_event.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/extention_transaction_bloc.dart';
 import 'package:BalanceFlow/core/service_locator.dart';
+import 'package:BalanceFlow/model/total_balance.dart';
 import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/utils/AppError.dart';
 import 'package:BalanceFlow/utils/constants.dart';
@@ -27,6 +28,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     on<AddBankSMS>((event,emit) async{
       _addBankSMS(event,emit);
     });
+    on<CalculateTotalBalance>((event, emit) => _fetchTotalBalance(event,emit));
 
   }
 
@@ -38,7 +40,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
      catch (e) {
       debugPrint("========Error=====>>  ${e.toString()}");
 
-      emit(TransactionError(error: AppError.customError(parseSMSError)));
+      // emit(TransactionError(error: AppError.customError(parseSMSError)));
     }
   }
 
@@ -100,6 +102,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
           .fetchTransactions();
 
       emit(FetchTransactions(transactions: transactions));
+
     } on Exception catch (e) {
       debugPrint("_loadBankTransactions 04 === > ${emit.isDone}");
 
@@ -117,6 +120,21 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       emit(TransactionError(error: AppError.exception(e)));
     }
   }
+  Future<void>_fetchTotalBalance(CalculateTotalBalance event, Emitter<TransactionState> emit)async {
+    try {
+      debugPrint("_fetchTotalBalance Bloc0");
+      emit(TransactionLoading());
+     TotalBalanceModel totalBalanceModel = await _repository.calculateTotalBalance();
+      debugPrint("_fetchTotalBalance Bloc1 ${totalBalanceModel.toString()}");
 
+      emit(FetchTotalBalance(totalBalanceModel: totalBalanceModel));
+      debugPrint("_fetchTotalBalance Bloc2  ${totalBalanceModel.toString()}");
+
+    } on Exception catch (e) {
+      emit(TransactionError(error: AppError.exception(e)));
+    }
+  }
 }
+
+
 

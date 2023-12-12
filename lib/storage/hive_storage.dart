@@ -70,7 +70,11 @@ class LocalTransactions implements TransactionMessageService{
   @override
   Future<TotalBalanceModel> calculateTotalBalance() async{
     try{
+      debugPrint("calculateTotalBalance Local");
+
       List<TransactionMessage> transactions = await fetchTransactions();
+      debugPrint("calculateTotalBalance Local Fetch");
+
       TotalBalanceModel totalBalanceModel = TotalBalanceModel(totalBalance: 0, income: 0, expense: 0);
       for (var item in transactions) {
         if(item.type == TransactionType.credit){
@@ -80,6 +84,8 @@ class LocalTransactions implements TransactionMessageService{
         }
       }
       totalBalanceModel.totalBalance = (totalBalanceModel.income - totalBalanceModel.expense);
+      debugPrint("calculateTotalBalance Local ${totalBalanceModel.toString()}");
+
       return totalBalanceModel;
     }catch(_){
       throw AppError.storageError();

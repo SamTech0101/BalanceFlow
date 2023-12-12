@@ -1,7 +1,13 @@
+import 'package:BalanceFlow/model/total_balance.dart';
 import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/utils/AppError.dart';
 
 abstract class TransactionState{}
+class FetchTotalBalance extends TransactionState{
+  final TotalBalanceModel totalBalanceModel;
+
+  FetchTotalBalance({required this.totalBalanceModel});
+}
 class TransactionInitial extends TransactionState{}
 class TransactionLoading extends TransactionState{}
 class FetchTransactions extends TransactionState{

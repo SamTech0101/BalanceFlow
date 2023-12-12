@@ -1,6 +1,10 @@
+import 'package:BalanceFlow/model/total_balance.dart';
 import 'package:flutter/material.dart';
 
 class TotalBalanceWidget extends StatelessWidget {
+  final TotalBalanceModel totalBalanceModel;
+
+  const TotalBalanceWidget({super.key, required this.totalBalanceModel});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -9,7 +13,7 @@ class TotalBalanceWidget extends StatelessWidget {
         color: Colors.blue,
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: const Column(
+      child:  Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
@@ -18,7 +22,7 @@ class TotalBalanceWidget extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            '₹ 460',
+            "₹ ${totalBalanceModel.totalBalance}",
             style: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           SizedBox(height: 20),
@@ -30,7 +34,7 @@ class TotalBalanceWidget extends StatelessWidget {
                   Icon(Icons.arrow_downward, color: Colors.green),
                   SizedBox(height: 4),
                   Text('Income', style: TextStyle(color: Colors.white)),
-                  Text('1000', style: TextStyle(color: Colors.white)),
+                  Text('${totalBalanceModel.income}', style: TextStyle(color: Colors.white)),
                 ],
               ),
               Column(
@@ -38,7 +42,7 @@ class TotalBalanceWidget extends StatelessWidget {
                   Icon(Icons.arrow_upward, color: Colors.red),
                   SizedBox(height: 4),
                   Text('Expense', style: TextStyle(color: Colors.white)),
-                  Text('540', style: TextStyle(color: Colors.white)),
+                  Text('${totalBalanceModel.expense}', style: TextStyle(color: Colors.white)),
                 ],
               ),
             ],
