@@ -66,7 +66,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
             TextField(
               controller: _amountController,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
+                prefixIcon: Icon(Icons.currency_rupee),
                 labelText: 'Amount',
                 border: OutlineInputBorder(),
                 labelStyle: TextStyle(color: Colors.grey)

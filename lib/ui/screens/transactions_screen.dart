@@ -122,15 +122,18 @@ Widget _buildTransactionListItem(TransactionMessage message, int index, FetchTra
       //2023-12-12T05:24:04.036440
       //2023-12-12T05:24:04.036
     },
-    child: Card(
-      child: ListTile(
-        leading: Icon(icon, color: signColor),
-        trailing: Text(message.amount.toString()),
-        subtitle: Text(message.description ?? "SMS"),
-        title: Text("${message.bankName} ${message.amount}  ${message.date.toIso8601String().split("T")[0]} "),
 
-        tileColor: signColor.withOpacity(0.1),
+
+        child: Card(
+          margin: const EdgeInsets.all(4),
+          child: ListTile(
+            leading: Column(children:[ Icon(icon, color: signColor),Text(signColor == Colors.red ? "Expense" : "Credit")]),
+            trailing: Text("${message.amount}₹") ,
+            title: Text("Category: ${message.description ?? "SMS"}"),
+            tileColor: signColor.withOpacity(0.1),
+
       ),
-    ),
+        ),
+
   );
 }
