@@ -1,5 +1,9 @@
 
+import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
+import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_event.dart';
+import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddTransactionDialog extends StatefulWidget {
   @override
@@ -9,8 +13,18 @@ class AddTransactionDialog extends StatefulWidget {
 class _AddTransactionDialogState extends State<AddTransactionDialog> {
   bool _isIncome = true; // This tracks the income/expense toggle state.
   DateTime _selectedDate = DateTime.now(); // This tracks the selected date.
+  TextEditingController _amountController  = TextEditingController();
+  TextEditingController _descriptionController  = TextEditingController();
+  TransactionType _transactionType = TransactionType.credit;
 
-  // This function is called when the user picks a date.
+  void _getTransactionType(){
+    if(_isIncome){
+      _transactionType = TransactionType.credit;
+    }else{
+      _transactionType = TransactionType.atmWithdrawal;
+
+    }
+  }
   void _presentDatePicker() {
     showDatePicker(
       context: context,
@@ -27,7 +41,13 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
     });
   }
 
-
+  @override
+  void dispose() {
+    // Step 4: Dispose the controller
+    _amountController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -44,6 +64,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
             ),
             SizedBox(height: 20),
             TextField(
+              controller: _amountController,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.attach_money),
                 labelText: 'Amount',
@@ -55,6 +76,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
             ),
             SizedBox(height: 20),
             TextField(
+              controller:_descriptionController ,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.note),
                 // labelText: 'Note on Transaction',
@@ -74,6 +96,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                   onSelected: (selected) {
                     setState(() {
                       _isIncome = true;
+                      _getTransactionType();
                     });
                   },
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color:!_isIncome ? Colors.white : Colors.black54,)),
@@ -86,6 +109,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                   onSelected: (selected) {
                     setState(() {
                       _isIncome = false;
+                      _getTransactionType();
                     });
                   },
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color:_isIncome ? Colors.white : Colors.black54,)),
@@ -111,8 +135,9 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
             ),
             ElevatedButton(
               onPressed: () {
-                // TODO: Implement transaction add functionality.
-              },
+                context.read<TransactionBloc>().add(AddBankTransaction(transactionMessage: TransactionMessage(bankName: "", amount: double.parse(_amountController.text),description: _descriptionController.text, transactionId: "", type: _transactionType, date: _selectedDate)));
+                Navigator.of(context).pop();
+                },
               child: Text('Add'),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 36), // double.infinity is the width and 36 is the height
@@ -122,5 +147,6 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
         ),
       ),
     );
+
   }
 }

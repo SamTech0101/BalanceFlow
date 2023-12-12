@@ -111,9 +111,10 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   void _addBankTransaction(AddBankTransaction event,
       Emitter<TransactionState> emit) async {
     try {
-      emit(TransactionLoading());
+      // emit(TransactionLoading());
       await _repository.addTransaction(event.transactionMessage);
-      emit(TransactionOperationSuccess(message: addTransactionSuccessTitle));
+      add(LoadBankTransactions());
+      // emit(TransactionOperationSuccess(message: addTransactionSuccessTitle));
     } on Exception catch (e) {
       emit(TransactionError(error: AppError.exception(e)));
     }

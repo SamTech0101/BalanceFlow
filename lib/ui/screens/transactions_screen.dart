@@ -3,6 +3,7 @@ import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_event.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_state.dart';
 import 'package:BalanceFlow/model/transaction_message.dart';
+import 'package:BalanceFlow/ui/widgets/snack_bar_error.dart';
 import 'package:BalanceFlow/ui/widgets/total_balance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,7 +59,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               );
             }
             else if (state is TransactionError){
-              showErrorSnackbar(context, state.error.message);
+              showErrorSnackBar(context, state.error.message);
             }
           },
           builder: (context,state){
@@ -85,17 +86,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     );
   }
 }
-void showErrorSnackbar(BuildContext context, String errorMessage) {
-  final snackBar = SnackBar(
-    content: Text(errorMessage),
-    backgroundColor: Colors.red.shade400, // Red color for error messages
-    behavior: SnackBarBehavior.floating, // Optional: changes how the snack bar behaves
-  );
 
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar() // Hide any existing snack bars
-    ..showSnackBar(snackBar); // Show the new snack bar
-}
 
 Widget _buildTransactionList(FetchTransactions? state,BuildContext context) {
   if(state == null){
