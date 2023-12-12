@@ -3,6 +3,7 @@
 
 
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
+import 'package:flutter/widgets.dart';
 import '../../model/transaction_message.dart';
 import '../../utils/constants.dart';
 extension TransactionBlocExtention on TransactionBloc{
@@ -64,6 +65,7 @@ extension TransactionBlocExtention on TransactionBloc{
             splitNumberFromString("${matchWithBy.group(0)}")[0]);
       }
     }
+    debugPrint("=======>parseDebitSms  amount ${amount} ");
       return TransactionMessage(
           bankName: "",
           amount: amount,

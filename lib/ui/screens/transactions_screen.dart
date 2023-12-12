@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:readsms/readsms.dart';
 
-import 'error_screen.dart';
 
 
 class TransactionsScreen extends StatefulWidget {
@@ -58,6 +57,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 },
               );
             }
+            else if (state is TransactionError){
+              showErrorSnackbar(context, state.error.message);
+            }
           },
           builder: (context,state){
             if (state is FetchTransactions) {
@@ -66,16 +68,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             if (state is TransactionLoading){
               return const Center(child: CircularProgressIndicator());
             }
-            else if( state is FetchTransactions || state is FetchTotalBalance ){
+            else if( state is FetchTransactions || state is FetchTotalBalance ||state is TransactionError ){
 
               return
                 _buildTransactionList(lastFetchTransactionsState,context);
             }else if (state is TransactionOperationSuccess){
               return Dialog(shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),child: Text(state.message),);
             }
-            else if (state is TransactionError){
-              return ErrorScreen(errorMessage: state.error.message);
-            }else{
+            else{
               return const Text("");
             }
 
@@ -85,6 +85,18 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     );
   }
 }
+void showErrorSnackbar(BuildContext context, String errorMessage) {
+  final snackBar = SnackBar(
+    content: Text(errorMessage),
+    backgroundColor: Colors.red.shade400, // Red color for error messages
+    behavior: SnackBarBehavior.floating, // Optional: changes how the snack bar behaves
+  );
+
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar() // Hide any existing snack bars
+    ..showSnackBar(snackBar); // Show the new snack bar
+}
+
 Widget _buildTransactionList(FetchTransactions? state,BuildContext context) {
   if(state == null){
     return const Center(child: Text('No transactions available'));
@@ -111,7 +123,7 @@ Widget _buildTransactionListItem(TransactionMessage message, int index, FetchTra
     icon = Icons.arrow_upward; // Icon for deposit
   }
   return Dismissible(
-    background: Container(color: Colors.red,),
+    background: Container(color: Colors.red.shade400,),
     key: Key(message.id),
     onDismissed: (direction) {
       debugPrint("_buildTransactionListItem   ${message.amount} ${message.date.toIso8601String()} ${message.id}");
