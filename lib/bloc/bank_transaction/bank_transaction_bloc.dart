@@ -40,7 +40,6 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
      catch (e) {
       debugPrint("========Error=====>>  ${e.toString()}");
 
-      // emit(TransactionError(error: AppError.customError(parseSMSError)));
     }
   }
 
@@ -85,9 +84,8 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   void _deleteBankTransaction(DeleteBankTransaction event,
       Emitter<TransactionState> emit) async {
     try {
-      emit(TransactionLoading());
       await _repository.deleteTransactionMessage(event.id);
-      emit(TransactionOperationSuccess(message: deleteTransactionSuccessTitle));
+
     } on Exception catch (e) {
       emit(TransactionError(error: AppError.exception(e)));
     }
@@ -101,7 +99,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       List<TransactionMessage> transactions = await _repository
           .fetchTransactions();
 
-      emit(FetchTransactions(transactions: transactions));
+      emit(FetchTransactions(transactions: transactions.reversed.toList()));
 
     } on Exception catch (e) {
       debugPrint("_loadBankTransactions 04 === > ${emit.isDone}");

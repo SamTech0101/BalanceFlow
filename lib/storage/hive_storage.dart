@@ -14,7 +14,6 @@ class LocalTransactions implements TransactionMessageService{
     try{
       final Box<TransactionMessage>   box = await _getBox() ;
       await box.put(message.id, message);
-      debugPrint("========addTransaction ");
 
     }catch(e){
       debugPrint("Error putting message in Hive box: $e");
@@ -25,12 +24,15 @@ class LocalTransactions implements TransactionMessageService{
   @override
   Future<void> deleteTransactionMessage(String messageId)async {
     try{
-
-      final box = Hive.box(hiveTransactionKey);
-      if(box.keys.isNotEmpty && box.keys.contains(messageId)) {
-        await box.delete(messageId);
+      final box = await _getBox() ;
+      for (var key in box.keys) {
+        if( key.toString().contains(messageId)) {
+          await box.delete(key);
+        }
       }
+
     }catch(_){
+      debugPrint("=====>deleteTransactionMessage is Failed");
       throw AppError.storageError();
     }
   }

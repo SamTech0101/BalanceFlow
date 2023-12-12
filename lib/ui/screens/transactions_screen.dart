@@ -1,3 +1,4 @@
+
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_event.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_state.dart';
@@ -63,12 +64,12 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               lastFetchTransactionsState = state;
             }
             if (state is TransactionLoading){
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             }
             else if( state is FetchTransactions || state is FetchTotalBalance ){
 
               return
-                _buildTransactionList(lastFetchTransactionsState);
+                _buildTransactionList(lastFetchTransactionsState,context);
             }else if (state is TransactionOperationSuccess){
               return Dialog(shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),child: Text(state.message),);
             }
@@ -84,7 +85,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     );
   }
 }
-Widget _buildTransactionList(FetchTransactions? state) {
+Widget _buildTransactionList(FetchTransactions? state,BuildContext context) {
   if(state == null){
     return const Center(child: Text('No transactions available'));
   }
@@ -92,12 +93,12 @@ Widget _buildTransactionList(FetchTransactions? state) {
     itemCount: state.transactions.length,
     itemBuilder: (context, index) {
       var message = state.transactions[index];
-      return _buildTransactionListItem(message, index, state);
+      return _buildTransactionListItem(message, index, state,context);
     },
   );
 }
 
-Widget _buildTransactionListItem(TransactionMessage message, int index, FetchTransactions state) {
+Widget _buildTransactionListItem(TransactionMessage message, int index, FetchTransactions state,BuildContext context) {
   Color signColor = Colors.grey; // Default color
   IconData icon = Icons.info; // Default icon
   // Check message type and assign color and icon accordingly
@@ -110,15 +111,19 @@ Widget _buildTransactionListItem(TransactionMessage message, int index, FetchTra
     icon = Icons.arrow_upward; // Icon for deposit
   }
   return Dismissible(
-    key: Key(index.toString()),
+    background: Container(color: Colors.red,),
+    key: Key(message.id),
     onDismissed: (direction) {
-      // ... your logic for dismissing an item
+      debugPrint("_buildTransactionListItem   ${message.amount} ${message.date.toIso8601String()} ${message.id}");
+      context.read<TransactionBloc>().add(DeleteBankTransaction(id: message.date.toIso8601String()));
+      //2023-12-12T05:24:04.036440
+      //2023-12-12T05:24:04.036
     },
     child: Card(
       child: ListTile(
         leading: Icon(icon, color: signColor),
         trailing: Text(message.amount.toString()),
-        subtitle: Text("SMS"),
+        subtitle: Text(message.description ?? "SMS"),
         title: Text("${message.bankName} ${message.amount}  ${message.date.toIso8601String().split("T")[0]} "),
 
         tileColor: signColor.withOpacity(0.1),

@@ -39,7 +39,6 @@ import 'package:flutter/foundation.dart';
   @override
   Future<List<TransactionMessage>> fetchTransactions() async{
     try{
-      debugPrint("========fetchTransactions ");
             return await _localTransactions.fetchTransactions();
     }catch(_){
     throw AppError.exception(Exception());
