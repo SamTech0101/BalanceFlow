@@ -1,6 +1,12 @@
 # BalanceFlow
 
-This document outlines the directory structure of the `BalanceFlow` Flutter application. The structure is designed to promote BloC architecture, separation of concerns, and ease of navigation.
+This is a description of `BalanceFlow`. It is released under the terms of
+the [MIT License](LICENSE).
+
+This document outlines the directory structure of the `BalanceFlow` Flutter application. The
+structure is designed to promote BloC architecture, separation of concerns, and ease of navigation.
+
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Project Layout
 
