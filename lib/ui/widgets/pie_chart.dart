@@ -141,7 +141,7 @@ List<PieChartSectionData> showingSections(TimePeriod period) {
       PieChartSectionData(
         color: Colors.grey, // Default color when there are no transactions
         value: 100, // Occupy the whole chart
-        title: 'No Data',
+        title: '0%',
       )
     ];
   }
