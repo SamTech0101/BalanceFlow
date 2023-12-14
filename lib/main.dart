@@ -8,7 +8,9 @@ import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/ui/screens/home_screen.dart';
 import 'package:BalanceFlow/ui/screens/transactions_screen.dart';
 import 'package:BalanceFlow/ui/widgets/add_transaction_dialog.dart';
+import 'package:BalanceFlow/ui/widgets/transaction_graph.dart';
 import 'package:BalanceFlow/utils/theme_utils.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -129,10 +131,13 @@ class _MyAppState extends State<MyApp>  {
 
             ),
 
-              body: const Padding(padding: EdgeInsets.all(8),child: TransactionsScreen(),),
+              body:  Padding(padding: EdgeInsets.all(8),child: TransactionGraph(),),
           ),
         ),
       ),
     );
   }
+
+
+
 }
