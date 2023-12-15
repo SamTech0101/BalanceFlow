@@ -28,6 +28,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     on<AddBankSMS>((event,emit) async{
       _addBankSMS(event,emit);
     });
+    on<ShowGraphTransaction>((event, emit) => emit(FetchGraph()));
     on<CalculateTotalBalance>((event, emit) => _fetchTotalBalance(event,emit));
 
   }

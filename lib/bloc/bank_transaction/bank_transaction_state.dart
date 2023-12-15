@@ -9,6 +9,7 @@ class FetchTotalBalance extends TransactionState{
   FetchTotalBalance({required this.totalBalanceModel});
 }
 class TransactionInitial extends TransactionState{}
+class FetchGraph extends TransactionState{}
 class TransactionLoading extends TransactionState{}
 class FetchTransactions extends TransactionState{
   final List<TransactionMessage> transactions;

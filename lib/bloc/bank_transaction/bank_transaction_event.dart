@@ -4,6 +4,7 @@ import 'package:readsms/model/sms.dart';
 abstract class TransactionEvent{}
 class LoadBankTransactions extends TransactionEvent{}
 class CalculateTotalBalance extends TransactionEvent{}
+class ShowGraphTransaction extends TransactionEvent{}
 class UpdateBankTransaction extends TransactionEvent{
   final TransactionMessage transactionMessage;
   UpdateBankTransaction({required this.transactionMessage});

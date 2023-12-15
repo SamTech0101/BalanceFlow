@@ -5,6 +5,7 @@ import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_state.dart';
 import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/ui/widgets/snack_bar_error.dart';
 import 'package:BalanceFlow/ui/widgets/total_balance.dart';
+import 'package:BalanceFlow/ui/widgets/transaction_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:readsms/readsms.dart';
@@ -57,6 +58,13 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   );// Opens the AddTransactionDialog
                 },
               );
+            }else if (state is FetchGraph){
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return  Center(child: TransactionGraph(transactionMessage: lastFetchTransactionsState?.transactions ?? []));// Opens the AddTransactionDialog
+                },
+              );
             }
             else if (state is TransactionError){
               showErrorSnackBar(context, state.error.message);
@@ -69,7 +77,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             if (state is TransactionLoading){
               return const Center(child: CircularProgressIndicator());
             }
-            else if( state is FetchTransactions || state is FetchTotalBalance ||state is TransactionError ){
+            else if( state is FetchTransactions || state is FetchTotalBalance ||state is TransactionError || state is FetchGraph){
 
               return
                 _buildTransactionList(lastFetchTransactionsState,context);

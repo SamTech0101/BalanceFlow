@@ -1,10 +1,14 @@
+import 'package:BalanceFlow/ui/widgets/pie_chart.dart';
 import 'package:flutter/material.dart';
 
-import 'line_chart.dart';
+import '../../model/transaction_message.dart';
+
 
 
 class TransactionGraph extends StatefulWidget {
-  const TransactionGraph({super.key});
+  final List<TransactionMessage> transactionMessage;
+
+  TransactionGraph({super.key , required this.transactionMessage});
 
   @override
   _TransactionGraphState createState() => _TransactionGraphState();
@@ -15,28 +19,17 @@ class _TransactionGraphState extends State<TransactionGraph> {
 
   @override
   Widget build(BuildContext context) {
-    return      Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          // SizedBox(
-          //   width: 400,height: 350,
-          //   // child: LineChartSample(transactions: transactions,),
-          //   child: PieChartBalance(),
-          // ),
-          SizedBox(
-            width: 400, height: 300,
-            // child: LineChartSample(transactions: transactions,),
-            child: LineChartBalance(),
-          )
-        ],
+    return      Container(
+      height: 400,
+      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+      margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),  color: Colors.blueGrey,
+      ),
+      child: Center(
+        child: PieChartBalance(transactionMessage: widget.transactionMessage,),
       ),
     );
 
   }
 
 }
-
-////////////////////////////////////
-///////////////////////////////////
-///////////////////////////////////

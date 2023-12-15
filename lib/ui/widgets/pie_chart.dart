@@ -1,14 +1,16 @@
+import 'package:BalanceFlow/model/transaction_message.dart';
 import 'package:BalanceFlow/ui/widgets/pie_chart_indicator.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../model/fake_transactions.dart';
 import '../../model/time_period.dart';
 import '../../utils/colors.dart';
 
 class PieChartBalance extends StatefulWidget {
-  const PieChartBalance({super.key});
+  final List<TransactionMessage> transactionMessage;
+
+   PieChartBalance({super.key ,required this.transactionMessage});
 
   @override
   _PieChartBalanceState createState() => _PieChartBalanceState();
@@ -17,6 +19,8 @@ class PieChartBalance extends StatefulWidget {
 class _PieChartBalanceState extends State<PieChartBalance> {
   TimePeriod selectedPeriod = TimePeriod.daily;
   int touchedIndex = -1;
+
+  List<TransactionMessage> get currentTransactionMessage => widget.transactionMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +31,15 @@ class _PieChartBalanceState extends State<PieChartBalance> {
           children: [
             ElevatedButton(
               onPressed: () => setState(() => selectedPeriod = TimePeriod.daily),
-              child: const Text('Daily'),
+              child: const Text('Day'),
             ),
             ElevatedButton(
               onPressed: () => setState(() => selectedPeriod = TimePeriod.weekly),
-              child: const Text('Weekly'),
+              child: const Text('Week'),
             ),
             ElevatedButton(
               onPressed: () => setState(() => selectedPeriod = TimePeriod.monthly),
-              child: const Text('Monthly'),
+              child: const Text('Month'),
             ),
           ],
         ),
@@ -98,71 +102,71 @@ class _PieChartBalanceState extends State<PieChartBalance> {
       ],
     );
   }
+  List<PieChartSectionData> showingSections(TimePeriod period ) {
+    double totalIncome = 0.0;
+    double totalExpense = 0.0;
 
-}
+    for (var transaction in currentTransactionMessage ) {
+      bool shouldAdd = false;
+      switch (period) {
+        case TimePeriod.daily:
+          shouldAdd = transaction.date.year == DateTime.now().year &&
+              transaction.date.month == DateTime.now().month &&
+              transaction.date.day == DateTime.now().day;
+          break;
 
-List<PieChartSectionData> showingSections(TimePeriod period) {
-  double totalIncome = 0.0;
-  double totalExpense = 0.0;
+        case TimePeriod.weekly:
+          int currentWeek = getWeekOfYear(DateTime.now());
+          shouldAdd = getWeekOfYear(transaction.date) == currentWeek && transaction.date.year == DateTime.now().year;
+          break;
+        case TimePeriod.monthly:
+          String currentMonthKey = DateFormat('yyyy-MM').format(DateTime.now());
+          shouldAdd = DateFormat('yyyy-MM').format(transaction.date) == currentMonthKey;
+          break;
+      }
 
-  for (var transaction in transactions) {
-    bool shouldAdd = false;
-    switch (period) {
-      case TimePeriod.daily:
-        shouldAdd = transaction.date.year == DateTime.now().year &&
-            transaction.date.month == DateTime.now().month &&
-            transaction.date.day == DateTime.now().day;
-        break;
-
-      case TimePeriod.weekly:
-        int currentWeek = getWeekOfYear(DateTime.now());
-        shouldAdd = getWeekOfYear(transaction.date) == currentWeek && transaction.date.year == DateTime.now().year;
-        break;
-      case TimePeriod.monthly:
-        String currentMonthKey = DateFormat('yyyy-MM').format(DateTime.now());
-        shouldAdd = DateFormat('yyyy-MM').format(transaction.date) == currentMonthKey;
-        break;
-    }
-
-    if (shouldAdd) {
-      if (transaction.transactionType == 'income') {
-        totalIncome += transaction.amount;
-      } else if (transaction.transactionType == 'expense') {
-        totalExpense += transaction.amount;
+      if (shouldAdd) {
+        if (transaction.type == TransactionType.credit) {
+          totalIncome += transaction.amount;
+        } else  {
+          totalExpense += transaction.amount;
+        }
       }
     }
-  }
 
-  double total = totalIncome + totalExpense;
-  if (total == 0) {
+    double total = totalIncome + totalExpense;
+    if (total == 0) {
+      return [
+        PieChartSectionData(
+          color: Colors.grey, // Default color when there are no transactions
+          value: 100, // Occupy the whole chart
+          title: '0%',
+        )
+      ];
+    }
+
     return [
       PieChartSectionData(
-        color: Colors.grey, // Default color when there are no transactions
-        value: 100, // Occupy the whole chart
-        title: '0%',
-      )
+          color: Colors.green, // Color for income
+          value: totalIncome / total * 100,
+          title: '${(totalIncome / total * 100).roundToDouble()}%',
+          titleStyle: const TextStyle(color: Colors.white,fontSize: 14),
+          radius: 60
+      ),
+      PieChartSectionData(
+          color: Colors.red, // Color for expense
+          value: totalExpense / total * 100,
+          title: '${(totalExpense / total * 100).roundToDouble()}%',
+          titleStyle: const TextStyle(color: Colors.white,fontSize: 14),
+          radius: 60
+      ),
     ];
+
+
   }
-
-  return [
-    PieChartSectionData(
-        color: Colors.green, // Color for income
-        value: totalIncome / total * 100,
-        title: '${(totalIncome / total * 100).roundToDouble()}%',
-        titleStyle: const TextStyle(color: Colors.white,fontSize: 14),
-        radius: 60
-    ),
-    PieChartSectionData(
-        color: Colors.red, // Color for expense
-        value: totalExpense / total * 100,
-        title: '${(totalExpense / total * 100).roundToDouble()}%',
-        titleStyle: const TextStyle(color: Colors.white,fontSize: 14),
-        radius: 60
-    ),
-  ];
-
-
 }
+
+
 
 
 int getWeekOfYear(DateTime date) {

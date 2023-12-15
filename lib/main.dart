@@ -92,8 +92,11 @@ class _MyAppState extends State<MyApp>  {
           theme: themeState.themeData,
           home: Scaffold(
             appBar: AppBar(
+
               title: const Text('SmartXP'),
                 actions: [
+
+
                   BlocBuilder<TransactionBloc,TransactionState>(
                     builder: (context,state)=>   Row(
                     children: [
@@ -110,7 +113,19 @@ class _MyAppState extends State<MyApp>  {
                           },
                         );
                       }, icon: const Icon(Icons.add) ),
-                    ],),),
+
+                      IconButton(onPressed: (){
+                        context.read<TransactionBloc>().add(ShowGraphTransaction());
+                      }, icon: const Icon(Icons.map) ),
+
+
+
+                    ],
+
+
+                    ),
+
+                  ),
 
 
 
@@ -131,7 +146,7 @@ class _MyAppState extends State<MyApp>  {
 
             ),
 
-              body:  Padding(padding: EdgeInsets.all(8),child: TransactionGraph(),),
+              body:  Padding(padding: EdgeInsets.all(8),child: TransactionsScreen(),),
           ),
         ),
       ),
