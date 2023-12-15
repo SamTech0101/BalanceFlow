@@ -28,10 +28,11 @@ List<Transaction> transactions = [
   // Transaction(13, 50.00, DateTime(2023, 11, 12), 'income'),
   // And some in a different month
   Transaction(17, 90.00, DateTime(2023, 11, 30), 'income'),
-  Transaction(18, 60.00, DateTime(2023, 10, 29), 'expense'),
-  Transaction(19, 60.00, DateTime(2023, 9, 11), 'income'),
-  Transaction(20, 60.00, DateTime(2023, 8, 9), 'expense'),
-  Transaction(21, 60.00, DateTime(2023, 7, 23), 'income'),
-  Transaction(22, 60.00, DateTime(2023, 7, 1), 'income'),
-  Transaction(23, 60.00, DateTime(2023, 5, 30), 'expense'),
+  Transaction(18, 62.00, DateTime(2023, 10, 29), 'expense'),
+  Transaction(19, 63.00, DateTime(2023, 9, 11), 'income'),
+  Transaction(20, 64.00, DateTime(2023, 8, 9), 'expense'),
+  Transaction(21, 65.00, DateTime(2023, 7, 23), 'income'),
+  Transaction(22, 66.00, DateTime(2023, 7, 1), 'income'),
+  Transaction(23, 66.00, DateTime(2023, 5, 30), 'expense'),
+  Transaction(24, 120.00, DateTime(2023, 1, 30), 'expense'),
 ];
