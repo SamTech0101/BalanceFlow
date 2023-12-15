@@ -3,11 +3,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../model/fake_transactions.dart';
 import '../../model/time_period.dart';
 import '../../utils/colors.dart';
-import 'fake_transactions.dart';
-
-
 
 class PieChartBalance extends StatefulWidget {
   const PieChartBalance({super.key});
