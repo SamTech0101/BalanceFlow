@@ -9,6 +9,7 @@ import 'package:BalanceFlow/utils/constants.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:readsms/model/sms.dart';
+
 import '../../repository/transaction_repository.dart';
 import 'bank_transaction_state.dart';
 
@@ -65,7 +66,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       }
      else {
 
-        emit(TransactionError(error: AppError.customError(parseSMSError)));
+        // emit(TransactionError(error: AppError.customError(parseSMSError)));
     }
   }
 
@@ -86,7 +87,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       Emitter<TransactionState> emit) async {
     try {
       await _repository.deleteTransactionMessage(event.id);
-
+      add(LoadBankTransactions());
     } on Exception catch (e) {
       emit(TransactionError(error: AppError.exception(e)));
     }

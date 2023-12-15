@@ -17,6 +17,7 @@ class TransactionMessageAdapter extends TypeAdapter<TransactionMessage> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return TransactionMessage(
+      id: fields[0] as String,
       bankName: fields[1] as String,
       amount: fields[2] as double,
       transactionId: fields[3] as String,

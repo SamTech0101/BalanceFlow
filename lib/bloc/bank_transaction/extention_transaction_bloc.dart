@@ -4,6 +4,7 @@
 
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
 import 'package:flutter/widgets.dart';
+
 import '../../model/transaction_message.dart';
 import '../../utils/constants.dart';
 extension TransactionBlocExtention on TransactionBloc{
@@ -20,8 +21,8 @@ extension TransactionBlocExtention on TransactionBloc{
           transactionId: "",
           type: TransactionType.atmWithdrawal,
           date: DateTime.now(),
-          description: "SMS"
-      );
+          description: "SMS",
+          id: UniqueKey().toString());
     }
     return null;
   }
@@ -31,13 +32,13 @@ extension TransactionBlocExtention on TransactionBloc{
     if (match != null) {
       double amount =  double.parse(splitNumberFromString("${match.group(0)}")[0]);
       return TransactionMessage(
-        bankName: "",
-        amount: amount ,
-        transactionId: "",
-        type: TransactionType.credit,
-        date: DateTime.now(),
-        description: "SMS"
-      );
+          bankName: "",
+          amount: amount,
+          transactionId: "",
+          type: TransactionType.credit,
+          date: DateTime.now(),
+          description: "SMS",
+          id: UniqueKey().toString());
     }
 
     return null;
@@ -68,12 +69,12 @@ extension TransactionBlocExtention on TransactionBloc{
     debugPrint("=======>parseDebitSms  amount ${amount} ");
       return TransactionMessage(
           bankName: "",
-          amount: amount,
-          transactionId: "",
-          type: TransactionType.debit,
-          date: DateTime.now(),
-          description: "SMS"
-      );
+        amount: amount,
+        transactionId: "",
+        type: TransactionType.debit,
+        date: DateTime.now(),
+        description: "SMS",
+        id: UniqueKey().toString());
     }
 
   List<String> splitNumberFromString(String input) {

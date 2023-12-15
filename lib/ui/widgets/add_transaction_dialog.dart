@@ -135,9 +135,17 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
             ),
             ElevatedButton(
               onPressed: () {
-                context.read<TransactionBloc>().add(AddBankTransaction(transactionMessage: TransactionMessage(bankName: "", amount: double.parse(_amountController.text),description: _descriptionController.text, transactionId: "", type: _transactionType, date: _selectedDate)));
+                context.read<TransactionBloc>().add(AddBankTransaction(
+                    transactionMessage: TransactionMessage(
+                        bankName: "",
+                        amount: double.parse(_amountController.text),
+                        description: _descriptionController.text,
+                        transactionId: "",
+                        type: _transactionType,
+                        date: _selectedDate,
+                        id: UniqueKey().toString())));
                 Navigator.of(context).pop();
-                },
+              },
               child: Text('Add'),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 36), // double.infinity is the width and 36 is the height

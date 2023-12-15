@@ -12,9 +12,10 @@ class LocalTransactions implements TransactionMessageService{
   @override
   Future<void> addTransaction(TransactionMessage message) async{
     try{
-      final Box<TransactionMessage>   box = await _getBox() ;
-      await box.put(message.id, message);
+      final Box<TransactionMessage> box = await _getBox();
+      debugPrint("=====>addTransaction ${message.id} is ${message.id}");
 
+      await box.put(message.id, message);
     }catch(e){
       debugPrint("Error putting message in Hive box: $e");
     }
@@ -26,11 +27,17 @@ class LocalTransactions implements TransactionMessageService{
     try{
       final box = await _getBox() ;
       for (var key in box.keys) {
-        if( key.toString().contains(messageId)) {
-          await box.delete(key);
-        }
-      }
+        debugPrint("=====>deleteTransactionMessage ${key} is ${messageId}");
 
+        if (key.contains(messageId)) {
+          debugPrint(
+              "=====>deleteTransactionMessage Trueee   ${key} is ${messageId}");
+
+          await box.delete(key);
+          debugPrint("=====>deleteTransactionMessage suceess");
+        }
+        debugPrint("=====>deleteTransactionMessage is ${messageId}");
+      }
     }catch(_){
       debugPrint("=====>deleteTransactionMessage is Failed");
       throw AppError.storageError();
@@ -50,17 +57,17 @@ class LocalTransactions implements TransactionMessageService{
   }
 
   @override
-  Future<void> updateTransaction(String messageId, TransactionMessage updatedTransaction
-      )async {
-    try{
+  Future<void> updateTransaction(
+      UniqueKey messageId, TransactionMessage updatedTransaction) async {
+    try {
       final box = await _getBox();
-      await box.put(messageId, updatedTransaction);
-    }catch(_){
+      await box.put(messageId.toString(), updatedTransaction);
+    } catch (_) {
       throw AppError.storageError();
     }
   }
-  Future<Box<TransactionMessage>> _getBox()async{
 
+  Future<Box<TransactionMessage>> _getBox() async {
     if (!Hive.isBoxOpen(hiveTransactionKey)){
       return await Hive.openBox<TransactionMessage>(hiveTransactionKey);
     }

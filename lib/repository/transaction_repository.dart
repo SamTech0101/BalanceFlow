@@ -46,12 +46,12 @@ import 'package:flutter/foundation.dart';
   }
 
   @override
-  Future<void> updateTransaction(String messageId, TransactionMessage updatedTransaction)async {
-    try{
+  Future<void> updateTransaction(
+      UniqueKey messageId, TransactionMessage updatedTransaction) async {
+    try {
       await _localTransactions.updateTransaction(messageId, updatedTransaction);
-    }catch(_){
+    } catch (_) {
       throw AppError.exception(Exception());
-
     }
   }
 

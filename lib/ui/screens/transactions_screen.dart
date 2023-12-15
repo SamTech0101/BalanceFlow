@@ -125,8 +125,11 @@ Widget _buildTransactionListItem(TransactionMessage message, int index, FetchTra
     background: Container(color: Colors.red.shade400,),
     key: Key(message.id),
     onDismissed: (direction) {
-      debugPrint("_buildTransactionListItem   ${message.amount} ${message.date.toIso8601String()} ${message.id}");
-      context.read<TransactionBloc>().add(DeleteBankTransaction(id: message.date.toIso8601String()));
+      debugPrint(
+          "_buildTransactionListItem  ${message.id.toString().replaceFirst("", "")}");
+      context
+          .read<TransactionBloc>()
+          .add(DeleteBankTransaction(id: message.id));
       //2023-12-12T05:24:04.036440
       //2023-12-12T05:24:04.036
     },
