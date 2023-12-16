@@ -1,5 +1,14 @@
 # BalanceFlow
 
+This application automatically reads the messages of banks in India and displays a pie chart and a list of bank transactions, allowing you to manage your income.
+‌Bank SMS examples : 
+ 
+**Cedit SMS Bank:** ![Credit SMS Bank](https://github.com/SamTech0101/BalanceFlow/blob/main/images/credit.png)
+
+**Debit SMS Bank:**![Debit SMS Bank](https://github.com/SamTech0101/BalanceFlow/blob/main/images/debit.png)
+ 
+**withdraw ATM SMS Bank:**![ATM SMS Bank](https://github.com/SamTech0101/BalanceFlow/blob/main/images/withdraw.png)
+
 
 ## Project Layout
 
