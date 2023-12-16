@@ -1,12 +1,5 @@
 # BalanceFlow
 
-This is a description of `BalanceFlow`. It is released under the terms of
-the [MIT License](LICENSE).
-
-This document outlines the directory structure of the `BalanceFlow` Flutter application. The
-structure is designed to promote BloC architecture, separation of concerns, and ease of navigation.
-
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Project Layout
 
@@ -22,6 +15,7 @@ BalanceFlow
 │   │   │   ├── bank_transaction_bloc.dart    
 │   │   │   ├── bank_transaction_event.dart   
 │   │   │   └── bank_transaction_state.dart  
+│   │   │   └── extention_transaction_bloc.dart  
 │   │   └── theme               
 │   │       ├── theme_bloc.dart               
 │   │       ├── theme_event.dart             
@@ -29,6 +23,9 @@ BalanceFlow
 │   ├── model                 
 │   │   ├── transaction_message.dart          
 │   │   └── transaction_message.g.dart            
+│   │   └── transaction_type_adapter.dart            
+│   │   └── total_balance.dart            
+│   │   └── time_period.dart           
 │   ├── repository             
 │   │   └── transaction_repository.dart                      
 │   ├── services                
@@ -36,16 +33,21 @@ BalanceFlow
 │   ├── storage                
 │   │   └── hive_storage.dart               
 │   ├── ui                      
-│   │   ├── screens             
-│   │   │   ├── home_screen.dart              
+│   │   ├── screens                         
 │   │   │   ├── error_screen.dart              
 │   │   │   └── transactions_screen.dart 
 │   │   └── widgets             
-│   │       └── transaction_card.dart            
+│   │       └── tadd_transaction_dialog.dart            
+│   │       └── pie_chart.dart           
+│   │       └── pie_chart_indicator.dart           
+│   │       └── snack_bar_error.dart           
+│   │       └── TimePeriod.dart            
+│   │       └── total_balance.dart           
+│   │       └── transaction_graph.dart            
 │   ├── utils                  
 │   │   └── AppError.dart                 
-│   │   └── Constants.dart                 
-│   │   └── general.dart                 
+│   │   └── colors.dart                 
+│   │   └── constant.dart                 
 │   │   └── theme_utils.dart                 
 │   └── core                    
 │       └── service_locator.dart                      
@@ -68,7 +70,12 @@ BalanceFlow
 - **/test:** Contains unit and widget tests.
 - **pubspec.yaml:** Defines the project's dependencies and settings.
 
-
 This structured approach aids in maintaining a clean and scalable codebase.
 
+This is a description of `BalanceFlow`. It is released under the terms of
+the [MIT License](LICENSE).
 
+This document outlines the directory structure of the `BalanceFlow` Flutter application. The
+structure is designed to promote BloC architecture, separation of concerns, and ease of navigation.
+
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)

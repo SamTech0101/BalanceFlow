@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_bloc.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_event.dart';
 import 'package:BalanceFlow/bloc/bank_transaction/bank_transaction_state.dart';
@@ -5,32 +7,20 @@ import 'package:BalanceFlow/bloc/theme/theme_bloc.dart';
 import 'package:BalanceFlow/bloc/theme/theme_event.dart';
 import 'package:BalanceFlow/bloc/theme/theme_state.dart';
 import 'package:BalanceFlow/model/transaction_message.dart';
-import 'package:BalanceFlow/ui/screens/home_screen.dart';
 import 'package:BalanceFlow/ui/screens/transactions_screen.dart';
 import 'package:BalanceFlow/ui/widgets/add_transaction_dialog.dart';
-import 'package:BalanceFlow/ui/widgets/transaction_graph.dart';
 import 'package:BalanceFlow/utils/theme_utils.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:async';
+
 import 'core/service_locator.dart';
 import 'model/transaction_type_adapter.dart';
-import 'ui/widgets/total_balance.dart';
 import 'utils/constants.dart';
 
 
 
-// Define a list to store all messages
-List<String> messages = [];
-
-//Dear SBI UPI User, ur A/ cX0273 credited by Rs20 on 13Nov23 by (Ref no564654654646)
-//Dear UPI user A/C X3327 debited by 210.0 on date 01 Dec23 trf to RAGHAV SINGH SO Refno 333552183075. If not u? call
-// 1800111109. -SBI
-/*Dear Customer, transaction number 331709194781 for Rs.10.00 by SBI Debit Card X8231 done at 89050458 on 13Nov23 at 09:45:09.
-Your updated available balance is Rs.232.88. If not done by you, forward this SMS to 9223008333/ call 1800111109/9449112211 to block card. GOl helpline for cyber fraud 1930.*/
 
 
 
@@ -93,18 +83,16 @@ class _MyAppState extends State<MyApp>  {
           home: Scaffold(
             appBar: AppBar(
 
-              title: const Text('SmartXP'),
-                actions: [
-
-
-                  BlocBuilder<TransactionBloc,TransactionState>(
-                    builder: (context,state)=>   Row(
-                    children: [
-                      IconButton(onPressed: (){
-
-                        context.read<TransactionBloc>().add(CalculateTotalBalance());
-
-                      }, icon: const Icon(Icons.info)),
+              title: const Text('BalanceFlow'), actions: [
+              BlocBuilder<TransactionBloc, TransactionState>(
+                builder: (context, state) => Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          context
+                              .read<TransactionBloc>()
+                              .add(CalculateTotalBalance());
+                        }, icon: const Icon(Icons.info)),
                       IconButton(onPressed: (){
                         showDialog(
                           context: context,
@@ -135,18 +123,14 @@ class _MyAppState extends State<MyApp>  {
                           IconButton(onPressed: (){
                             var isDark = themeSate.themeData == darkTheme;
                                   context.read<ThemeBloc>().add(InitializeTheme(isDark ? darkTheme : lightTheme));
-
-                          }, icon: const Icon(Icons.lightbulb) );
-
-                      }),
-
-
-
-                ]
-
+                    },
+                    icon: const Icon(Icons.lightbulb));
+              }),
+            ]),
+            body: const Padding(
+              padding: EdgeInsets.all(8),
+              child: TransactionsScreen(),
             ),
-
-              body:  Padding(padding: EdgeInsets.all(8),child: TransactionsScreen(),),
           ),
         ),
       ),
