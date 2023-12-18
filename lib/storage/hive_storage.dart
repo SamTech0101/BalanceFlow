@@ -13,7 +13,6 @@ class LocalTransactions implements TransactionMessageService{
   Future<void> addTransaction(TransactionMessage message) async{
     try{
       final Box<TransactionMessage> box = await _getBox();
-      debugPrint("=====>addTransaction ${message.id} is ${message.id}");
 
       await box.put(message.id, message);
     }catch(e){
@@ -27,16 +26,10 @@ class LocalTransactions implements TransactionMessageService{
     try{
       final box = await _getBox() ;
       for (var key in box.keys) {
-        debugPrint("=====>deleteTransactionMessage ${key} is ${messageId}");
-
         if (key.contains(messageId)) {
-          debugPrint(
-              "=====>deleteTransactionMessage Trueee   ${key} is ${messageId}");
-
           await box.delete(key);
-          debugPrint("=====>deleteTransactionMessage suceess");
+          debugPrint("=====>deleteTransactionMessage success");
         }
-        debugPrint("=====>deleteTransactionMessage is ${messageId}");
       }
     }catch(_){
       debugPrint("=====>deleteTransactionMessage is Failed");

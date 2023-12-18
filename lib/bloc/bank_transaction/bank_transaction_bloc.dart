@@ -36,37 +36,45 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
 
   Future<void> _addBankSMS(AddBankSMS event, Emitter<TransactionState> emit) async {
     try {
-      emit(TransactionLoading());
+      // emit(TransactionLoading());
       await  _processSmsMessages(event,emit);
     }
      catch (e) {
+       emit(TransactionError(error: AppError.customError(parseSMSError)));
       debugPrint("========Error=====>>  ${e.toString()}");
-
     }
   }
 
   Future<void> _processSmsMessages(AddBankSMS event,Emitter<TransactionState> emit) async {
-    final SMS sms = event.sms ;
-      TransactionMessage? transactionMessage;
-      //debit
-      if (event.sms.body.contains(debitTitle)||event.sms.body.contains(debitTitle.toLowerCase())) {
-        transactionMessage = parseDebitSms(sms.body);
-        //credit
-      } else if (sms.body.contains(creditTitle)) {
-        transactionMessage = parseCreditSms(sms.body);
-        //ATM
-      } else if (sms.body.contains(atmTitle) ||sms.body.contains(withdrawnTitle)) {
-        transactionMessage = parseAtmWithdrawalSms(
-            sms.body);
-      }
-      if (transactionMessage != null) {
-        await _repository.addTransaction(transactionMessage);
-        add(LoadBankTransactions());
+    final SMS sms = event.sms;
+    TransactionMessage? transactionMessage;
+    //debit
+    debugPrint("========_processSmsMessages=====>>  ");
 
-      }
-     else {
+    if (event.sms.body.contains(debitTitle) ||
+        event.sms.body.contains(debitTitle.toLowerCase())) {
+      debugPrint("========debitTitle=====>>  ");
 
-        // emit(TransactionError(error: AppError.customError(parseSMSError)));
+      transactionMessage = parseDebitSms(sms.body);
+      //credit
+    } else if (sms.body.contains(creditTitle)) {
+      debugPrint("========creditTitle=====>>  ");
+
+      transactionMessage = parseCreditSms(sms.body);
+      //ATM
+    } else if (sms.body.contains(atmTitle) ||
+        sms.body.contains(withdrawnTitle)) {
+      debugPrint("========atmTitle=====>>  ");
+
+      transactionMessage = parseAtmWithdrawalSms(sms.body);
+    }
+    if (transactionMessage != null) {
+      await _repository.addTransaction(transactionMessage);
+      add(LoadBankTransactions());
+    } else {
+      debugPrint("========Error=====>> parseSMSError ");
+
+      // emit(TransactionError(error: AppError.customError(parseSMSError)));
     }
   }
 
@@ -104,7 +112,6 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       emit(FetchTransactions(transactions: transactions.reversed.toList()));
 
     } on Exception catch (e) {
-      debugPrint("_loadBankTransactions 04 === > ${emit.isDone}");
 
       emit(TransactionError(error: AppError.exception(e)));
     }

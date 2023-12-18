@@ -19,11 +19,6 @@ import 'core/service_locator.dart';
 import 'model/transaction_type_adapter.dart';
 import 'utils/constants.dart';
 
-
-
-
-
-
 void main() async {
   setupLocator();
   await Hive.initFlutter();
