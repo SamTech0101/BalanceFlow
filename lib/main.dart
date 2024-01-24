@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:telephony/telephony.dart';
 
 import 'core/service_locator.dart';
 import 'model/transaction_type_adapter.dart';
@@ -37,14 +38,31 @@ class MyApp extends StatefulWidget {
 
 }
 
-class _MyAppState extends State<MyApp>  {
-
+class _MyAppState extends State<MyApp> {
+  final Telephony telephony = Telephony.instance;
+  SmsMessage? lastSms;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
+    fetchLastSms();
+  }
 
+  fetchLastSms() async {
+    if (await Permission.sms.request().isGranted) {
+      List<SmsMessage> smsMessages = await telephony.getInboxSms(
+        columns: [SmsColumn.ADDRESS, SmsColumn.BODY],
+        sortOrder: [OrderBy(SmsColumn.DATE, sort: Sort.DESC)],
+      );
+      debugPrint("Telephony last SMS is ${smsMessages.first.body}");
+
+      if (smsMessages.isNotEmpty) {
+        setState(() {
+          lastSms = smsMessages.first;
+        });
+      }
+    }
   }
 
   Future<void> initPlatformState() async {

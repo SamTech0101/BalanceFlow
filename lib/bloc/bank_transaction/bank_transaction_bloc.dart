@@ -49,7 +49,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     final SMS sms = event.sms;
     TransactionMessage? transactionMessage;
     //debit
-    debugPrint("========_processSmsMessages=====>>  ");
+    debugPrint("========_processSmsMessages=====>>  ${sms.body}");
 
     if (event.sms.body.contains(debitTitle) ||
         event.sms.body.contains(debitTitle.toLowerCase())) {
@@ -74,7 +74,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     } else {
       debugPrint("========Error=====>> parseSMSError ");
 
-      // emit(TransactionError(error: AppError.customError(parseSMSError)));
+      emit(TransactionError(error: AppError.customError(parseSMSError)));
     }
   }
 
